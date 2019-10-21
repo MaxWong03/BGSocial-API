@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS game_categories CASCADE;
+
+CREATE TABLE game_categories (
+  id SERIAL PRIMARY KEY NOT NULL,
+  game_id INTEGER REFERENCES games(id) ON DELETE CASCADE,
+  category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
+);

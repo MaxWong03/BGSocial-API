@@ -1,6 +1,0 @@
-DROP TABLE IF EXISTS game_categories CASCADE;
-
-CREATE TABLE game_categories (
-  id SERIAL PRIMARY KEY NOT NULL,
-  name VARCHAR(255) NOT NULL
-);
