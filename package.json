@@ -6,19 +6,23 @@
   "scripts": {
     "start": "node ./src/index.js",
     "error": "TEST_ERROR=true node ./src/index.js",
-    "reset": "psql -U development -d scheduler_development < ./src/db/schema/create.sql && psql -U development -d scheduler_development < ./src/db/schema/development.sql"
+    "reset": "psql -U development -d scheduler_development < ./src/db/schema/create.sql && psql -U development -d scheduler_development < ./src/db/schema/development.sql",
+    "db:reset": "node bin/resetdb.js",
+    "dev": "./node_modules/.bin/nodemon -L --ignore public/"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "dotenv": "^7.0.0",
-    "express": "^4.16.4",
-    "helmet": "^3.18.0",
-    "pg": "^7.8.1",
-    "socket.io": "^2.2.0",
-    "ws": "^7.0.0"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^3.21.1",
+    "nodemon": "^1.19.4",
+    "pg": "^7.12.1",
+    "pg-native": "^3.0.0",
+    "socket.io": "^2.3.0",
+    "ws": "^7.2.0"
   },
   "devDependencies": {
     "jest": "^24.8.0",

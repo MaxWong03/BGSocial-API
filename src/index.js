@@ -1,7 +1,8 @@
-const PORT = process.env.PORT || 8001;
+const PORT = process.env.PORT || 8080;
 const ENV = require("./environment");
 
-const app = require("./application")(ENV, { updateAppointment });
+// const app = require("./application")(ENV, { updateAppointment });
+const app = require("./application")();
 const server = require("http").Server(app);
 
 const WebSocket = require("ws");
@@ -17,19 +18,19 @@ wss.on("connection", socket => {
   };
 });
 
-function updateAppointment(id, interview) {
-  wss.clients.forEach(function eachClient(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(
-        JSON.stringify({
-          type: "SET_INTERVIEW",
-          id,
-          interview
-        })
-      );
-    }
-  });
-}
+// function updateAppointment(id, interview) {
+//   wss.clients.forEach(function eachClient(client) {
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(
+//         JSON.stringify({
+//           type: "SET_INTERVIEW",
+//           id,
+//           interview
+//         })
+//       );
+//     }
+//   });
+// }
 
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT} in ${ENV} mode.`);
