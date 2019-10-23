@@ -35,6 +35,10 @@ const parseArray = (arr) => {
   return JSON.stringify(arr.join(", ")).replace(/"/g, "'");
 }
 
+const parseDoubleQuote = (quote) => {
+  return JSON.stringify(quote).replace(/"/g, "'")
+}
+
 const bggPromise = [];
 let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
 
@@ -48,7 +52,7 @@ Promise.all(bggPromise)
 
       sqlQuery += `(
         ${parseNum(data.id)},
-        ${JSON.stringify(data.name).replace(/"/g, "'")},
+        ${parseDoubleQuote(data.name)},
         ${parseDescription(data.description)},
         ${parseNum(data.yearpublished)},
         ${parseNum(data.age.min)},
@@ -56,8 +60,8 @@ Promise.all(bggPromise)
         ${parseNum(data.playtime.max)},
         ${parseNum(data.id)},
         ${parseFlo(data.rating)}, 
-        ${JSON.stringify(data.thumbnail).replace(/"/g, "'")},
-        ${JSON.stringify(data.image).replace(/"/g, "'")},
+        ${parseDoubleQuote(data.thumbnail)},
+        ${parseDoubleQuote(data.image)},
         ${parseArray(data.categories)},
         ${parseArray(data.mechanics)})`
       index === gameData.length - 1 ? sqlQuery += ';\n' : sqlQuery += ',\n'
