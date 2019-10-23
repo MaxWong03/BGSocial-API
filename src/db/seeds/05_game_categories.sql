@@ -4,4 +4,3 @@ VALUES (1, 2, 1),
 (3, 2, 2);
 
 SELECT SETVAL('game_categories_id_seq', 50);
-
