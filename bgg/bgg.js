@@ -26,7 +26,6 @@ generateBGGPromise(bggPromise, 32);
 Promise.all(bggPromise)
   .then((gameData) => {
     gameData.forEach((data, index) => {
-
       sqlQuery += `(
         ${parseNum(data.id)}, --id
         ${parseDoubleQuote(data.name)}, --name
@@ -45,5 +44,5 @@ Promise.all(bggPromise)
     })
     return sqlQuery;
   })
-  .then((sqlSeedQuery) => fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery));
+  .then(sqlSeedQuery => fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery));
 
