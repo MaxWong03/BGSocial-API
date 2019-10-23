@@ -1,15 +1,10 @@
+// load .env data into process.env
+require('../src/environment');
+
+// other dependencies
 const fs = require('fs');
 const chalk = require('chalk');
 const Client = require('pg-native');
-const path = require("path");
-
-
-// load .env data into process.env
-const ENV = process.env.NODE_ENV || "development";
-const PATH = path.resolve(__dirname, "../.env." + ENV);
-require('dotenv').config({ path: PATH });
-
-// other dependencies
 
 // PG connection setup
 const connectionString = process.env.DATABASE_URL ||
