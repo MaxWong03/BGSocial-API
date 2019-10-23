@@ -20,9 +20,12 @@ Promise.all(bggPromise)
       // console.log("before:", data.play_time_min);
       console.log(data.description);
       const parsedDescription = JSON.stringify(
-      (data.description) 
+      (
+      data.description) 
         .replace(/\\/g, '')
-        .replace(/"/gm, "'"));
+        .replace(/"/g, "'")
+        .replace(/\n/g, '')
+      );
       console.log(parsedDescription)
       sqlQuery += `(
         ${JSON.stringify(parseInt(data.id))},
