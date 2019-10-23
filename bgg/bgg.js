@@ -8,7 +8,7 @@ const generateBGGPromise = (promiseArr, gameNum) => {
   for (let i = 1; i <= gameNum; i++) {
     promiseArr.push(bgg.getBoardGameById(i));
   }
-}
+};
 
 const parseDescription = (desc) => {
   return JSON.stringify(
@@ -21,7 +21,11 @@ const parseDescription = (desc) => {
       .replace(/\n/g, '')
     )
       .replace(/"/g, "'");
-}
+};
+
+const parseNum = (int) => {
+ return JSON.stringify(parseInt(int))
+};
 
 const bggPromise = [];
 let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
@@ -29,19 +33,20 @@ let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, p
 
 generateBGGPromise(bggPromise, 32);
 
+
 Promise.all(bggPromise)
   .then((gameData) => {
     gameData.forEach((data, index) => {
-      const parsedDescription = parseDescription(data.description)
+
       sqlQuery += `(
-        ${JSON.stringify(parseInt(data.id))},
+        ${parseNum(data.id)},
         ${JSON.stringify(data.name).replace(/"/g, "'")},
-        ${parsedDescription},
-        ${JSON.stringify(parseInt(data.yearpublished))},
-        ${JSON.stringify(parseInt(data.age.min))},
-        ${JSON.stringify(parseInt(data.playtime.min))},
-        ${JSON.stringify(parseInt(data.playtime.max))},
-        ${JSON.stringify(parseInt(data.id))},
+        ${parseDescription(data.description)},
+        ${parseNum(data.yearpublished)},
+        ${parseNum(data.age.min)},
+        ${parseNum(data.playtime.min)},
+        ${parseNum(data.playtime.max)},
+        ${parseNum(data.id)},
         ${JSON.stringify(parseFloat(data.rating))}, 
         ${JSON.stringify(data.thumbnail).replace(/"/g, "'")},
         ${JSON.stringify(data.image).replace(/"/g, "'")},
