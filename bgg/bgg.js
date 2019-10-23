@@ -5,24 +5,40 @@ const fs = require('fs');
 //   .then(data => console.log(data));
 
 const bggPromise = [];
-let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
+let sqlQuery = 'INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playtimemax, bggid, averagebggrating, thumbnail, image, category, mechanic) VALUES\n'
 
 
 
 
-for (let i = 1; i <= 1; i++) {
+for (let i = 1; i <= 10; i++) {
   bggPromise.push(bgg.getBoardGameById(i))
 }
 
 Promise.all(bggPromise) 
   .then((gameData) => {
     gameData.forEach((data, index) => {
+      // console.log("before:", data.play_time_min);
+      // console.log("after:",JSON.stringify(data.playtimemin));
+      sqlQuery += `(
+        ${JSON.stringify(parseInt(data.id))},
+        ${JSON.stringify(data.name)},
+        ${JSON.stringify(data.description)},
+        ${JSON.stringify(parseInt(data.yearpublished))},
+        ${JSON.stringify(parseInt(data.age.min))},
+        ${JSON.stringify(parseInt(data.playtime.min))},
+        ${JSON.stringify(parseInt(data.playtime.max))},
+        ${JSON.stringify(parseInt(data.id))},
+        ${JSON.stringify(parseFloat(data.rating))}, 
+        ${JSON.stringify(data.thumbnail)},
+        ${JSON.stringify(data.image)},
+        ${JSON.stringify(data.categories.join(""))},
+        ${JSON.stringify(data.mechanics.join(""))})`
+      for (let [key, value] of Object.entries(data)) {
+        console.log(`${key}: ${JSON.stringify(value)}`);
+      }
+      // console.log('index:', index, "\ndata:", data)
 
-      // sqlQuery += `(${data.id}, ${data.name}, ${data.description}, ${data.year_published}, ${data.age}, ${data.play_time_min}, ${data.play_time_max}, ${data.bgg_id}, ${data.average_bgg_rating}, ${data.thumbnail}, ${data.image}, ${data.category}, ${data.mechanic})`
-
-      console.log('index:', index, "\ndata:", data)
-
-      index === gameData.length - 1 ? sqlQuery += ',\n' : sqlQuery += ';\n'
+      index === gameData.length - 1 ? sqlQuery += ';\n' : sqlQuery += ',\n'
     })
 
     return sqlQuery

@@ -9,7 +9,7 @@ CREATE TABLE games (
   play_time_min INTEGER,
   play_time_max INTEGER,
   bgg_id INTEGER NOT NULL,
-  average_bgg_rating INTEGER NOT NULL,
+  average_bgg_rating DOUBLE PRECISION,
   thumbnail VARCHAR(255),
   image VARCHAR(255),
   category VARCHAR(255),
