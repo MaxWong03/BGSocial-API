@@ -11,12 +11,12 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         7.6246, 
         "https://cf.geekdo-images.com/thumb/img/Y2pmp3_tPmiyJ032upHBwqD49xM=/fit-in/200x150/pic4718279.jpg",
         "https://cf.geekdo-images.com/original/img/uqlrq_bQJqHpcaN7_7qocV5XfbU=/0x0/pic4718279.jpg",
-        "EconomicNegotiationPolitical",
-        "Area Majority / InfluenceAuction/BiddingDice RollingHand ManagementSimultaneous Action Selection"),
+        "Economic, Negotiation, Political",
+        "Area Majority / Influence, Auction/Bidding, Dice Rolling, Hand Management, Simultaneous Action Selection"),
 (
         2,
         "Dragonmaster",
-        "Dragonmaster is a trick-taking card game based on an older game called Coup d'Ã‰tat. Each player is given a supply of plastic gems, which represent points. Each player will get to be the dealer for five different hands, with slightly different goals for each hand. After all cards have been dealt out, the dealer decides which hand best suits his or her current cards, and the other players are penalized points (in the form of crystals) for taking certain tricks or cards. For instance, if \"first\" or \"last\" is called, then a player is penalized for taking the first or last tricks. All players will get a chance to be dealer for five hands, but other players can steal this opportunity by taking all of the tricks during certain hands. At the end, the biggest pile of gems wins the game.\n\nJewel contents:\n\n10 clear (2 extra)\n14 green (2 extra)\n22 red (2 extra)\n22 blue (2 extra)\n\n",
+        "Dragonmaster is a trick-taking card game based on an older game called Coup d'Ã‰tat. Each player is given a supply of plastic gems, which represent points. Each player will get to be the dealer for five different hands, with slightly different goals for each hand. After all cards have been dealt out, the dealer decides which hand best suits his or her current cards, and the other players are penalized points (in the form of crystals) for taking certain tricks or cards. For instance, if 'first' or 'last' is called, then a player is penalized for taking the first or last tricks. All players will get a chance to be dealer for five hands, but other players can steal this opportunity by taking all of the tricks during certain hands. At the end, the biggest pile of gems wins the game.\n\nJewel contents:\n\n10 clear (2 extra)\n14 green (2 extra)\n22 red (2 extra)\n22 blue (2 extra)\n\n",
         1981,
         12,
         30,
@@ -25,12 +25,12 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         6.60149, 
         "https://cf.geekdo-images.com/thumb/img/2tQqL6whiVTSAxR7iG8F1CMMcFY=/fit-in/200x150/pic4001505.jpg",
         "https://cf.geekdo-images.com/original/img/o07K8ZVh0PkOpOnSZs1TuABb7I4=/0x0/pic4001505.jpg",
-        "Card GameFantasy",
+        "Card Game, Fantasy",
         "Trick-taking"),
 (
         3,
         "Samurai",
-        "Part of the Knizia tile-laying trilogy, Samurai is set in medieval Japan. Players compete to gain the favor of three factions: samurai, peasants, and priests, which are represented by helmet, rice paddy, and Buddha figures scattered about the board, which features the islands of Japan. The competition is waged through the use of hexagonal tiles, each of which help curry favor of one of the three factions &mdash; or all three at once! Players can make lightning-quick strikes with horseback ronin and ships or approach their conquests more methodically. As each figure (helmets, rice paddies, and Buddhas) is surrounded, it is awarded to the player who has gained the most favor with the corresponding group.\n\nGameplay continues until all the symbols of one type have been removed from the board or four figures have been removed from play due to a tie for influence.\n\nAt the end of the game, players compare captured symbols of each type, competing for majorities in each of the three types. Ties are not uncommon and are broken based on the number of other, \"non-majority\" symbols each player has collected.\n\n",
+        "Part of the Knizia tile-laying trilogy, Samurai is set in medieval Japan. Players compete to gain the favor of three factions: samurai, peasants, and priests, which are represented by helmet, rice paddy, and Buddha figures scattered about the board, which features the islands of Japan. The competition is waged through the use of hexagonal tiles, each of which help curry favor of one of the three factions &mdash; or all three at once! Players can make lightning-quick strikes with horseback ronin and ships or approach their conquests more methodically. As each figure (helmets, rice paddies, and Buddhas) is surrounded, it is awarded to the player who has gained the most favor with the corresponding group.\n\nGameplay continues until all the symbols of one type have been removed from the board or four figures have been removed from play due to a tie for influence.\n\nAt the end of the game, players compare captured symbols of each type, competing for majorities in each of the three types. Ties are not uncommon and are broken based on the number of other, 'non-majority' symbols each player has collected.\n\n",
         1998,
         10,
         30,
@@ -39,8 +39,8 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         7.44068, 
         "https://cf.geekdo-images.com/thumb/img/BOzp5hzTDSHjXf0yijvREDXxQos=/fit-in/200x150/pic3211873.jpg",
         "https://cf.geekdo-images.com/original/img/mPS50ts53753q5-kb5vWbTDN8Z0=/0x0/pic3211873.jpg",
-        "Abstract StrategyMedieval",
-        "Area Majority / InfluenceHand ManagementSet CollectionTile Placement"),
+        "Abstract Strategy, Medieval",
+        "Area Majority / Influence, Hand Management, Set Collection, Tile Placement"),
 (
         4,
         "Tal der Könige",
@@ -54,7 +54,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         "https://cf.geekdo-images.com/thumb/img/aqEMohPTNBbRO84X7J5tq3dirBk=/fit-in/200x150/pic285299.jpg",
         "https://cf.geekdo-images.com/original/img/TgcSkyM0Stk6Xz4ZahXrhpVfjm8=/0x0/pic285299.jpg",
         "Ancient",
-        "Action PointsArea Majority / InfluenceAuction/BiddingSet Collection"),
+        "Action Points, Area Majority / Influence, Auction/Bidding, Set Collection"),
 (
         5,
         "Acquire",
@@ -68,7 +68,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         "https://cf.geekdo-images.com/thumb/img/ZODhu5g13HRQEcOgMP8oiRooQQc=/fit-in/200x150/pic3299296.jpg",
         "https://cf.geekdo-images.com/original/img/Bz4tTHNpq6gUKFkJs0fJdVIGR1s=/0x0/pic3299296.jpg",
         "Economic",
-        "Hand ManagementInvestmentMarketOwnershipStock HoldingTile Placement"),
+        "Hand Management, Investment, Market, Ownership, Stock Holding, Tile Placement"),
 (
         6,
         "Mare Mediterraneum",
@@ -81,7 +81,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         6.50443, 
         "https://cf.geekdo-images.com/thumb/img/MPGApu8bmkLesVqWpSZawq2jlLI=/fit-in/200x150/pic28424.jpg",
         "https://cf.geekdo-images.com/original/img/mmk6bqbXRiIKfS5sovP8uA_wSQA=/0x0/pic28424.jpg",
-        "CivilizationNautical",
+        "Civilization, Nautical",
         "Dice Rolling"),
 (
         7,
@@ -96,7 +96,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         "https://cf.geekdo-images.com/thumb/img/_o2Qy_RXfWQs7gaIwwsB3l6oEJU=/fit-in/200x150/pic181642.jpg",
         "https://cf.geekdo-images.com/original/img/Gri8ET3BFLE6mzdQLyWZnjWv25s=/0x0/pic181642.jpg",
         "Abstract Strategy",
-        "EnclosurePattern BuildingPattern RecognitionTile Placement"),
+        "Enclosure, Pattern Building, Pattern Recognition, Tile Placement"),
 (
         8,
         "Lords of Creation",
@@ -109,7 +109,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         6.1401, 
         "https://cf.geekdo-images.com/thumb/img/YmAF5-CpAuD1kbnJTIm7Z6r5p-E=/fit-in/200x150/pic374320.jpg",
         "https://cf.geekdo-images.com/original/img/HjECVVaFq1fjMb-dtlIAI6hKRq0=/0x0/pic374320.jpg",
-        "CivilizationFantasy",
+        "Civilization, Fantasy",
         "Modular Board"),
 (
         9,
@@ -124,7 +124,7 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         "https://cf.geekdo-images.com/thumb/img/vh6QNbi9pJO4rkdMFdeqkDDKPtQ=/fit-in/200x150/pic1731731.jpg",
         "https://cf.geekdo-images.com/original/img/p_RmeyXFl0-NdTUxAAX-U9fkIRY=/0x0/pic1731731.jpg",
         "Exploration",
-        "Area Majority / InfluenceTile Placement"),
+        "Area Majority / Influence, Tile Placement"),
 (
         10,
         "Elfenland",
@@ -137,5 +137,5 @@ INSERT INTO games (id, name, description, yearpublished, age, playtimemin, playt
         6.72701, 
         "https://cf.geekdo-images.com/thumb/img/eqDi6VPAU3XUvDDhqur97X2umO0=/fit-in/200x150/pic1798136.jpg",
         "https://cf.geekdo-images.com/original/img/M3fRcs2sKpffc7Yl1KXodvbBa5Q=/0x0/pic1798136.jpg",
-        "FantasyTravel",
-        "Card DraftingHand ManagementNetwork and Route BuildingPoint to Point Movement");
+        "Fantasy, Travel",
+        "Card Drafting, Hand Management, Network and Route Building, Point to Point Movement");

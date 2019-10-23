@@ -14,15 +14,20 @@ for (let i = 1; i <= 10; i++) {
   bggPromise.push(bgg.getBoardGameById(i))
 }
 
-Promise.all(bggPromise) 
+Promise.all(bggPromise)
   .then((gameData) => {
     gameData.forEach((data, index) => {
       // console.log("before:", data.play_time_min);
-      // console.log("after:",JSON.stringify(data.playtimemin));
+      console.log(data.description);
+      const parsedDescription = JSON.stringify(
+      (data.description) 
+        .replace(/\\/g, '')
+        .replace(/"/gm, "'"));
+      console.log(parsedDescription)
       sqlQuery += `(
         ${JSON.stringify(parseInt(data.id))},
         ${JSON.stringify(data.name)},
-        ${JSON.stringify(data.description)},
+        ${parsedDescription},
         ${JSON.stringify(parseInt(data.yearpublished))},
         ${JSON.stringify(parseInt(data.age.min))},
         ${JSON.stringify(parseInt(data.playtime.min))},
@@ -31,10 +36,10 @@ Promise.all(bggPromise)
         ${JSON.stringify(parseFloat(data.rating))}, 
         ${JSON.stringify(data.thumbnail)},
         ${JSON.stringify(data.image)},
-        ${JSON.stringify(data.categories.join(""))},
-        ${JSON.stringify(data.mechanics.join(""))})`
+        ${JSON.stringify(data.categories.join(", "))},
+        ${JSON.stringify(data.mechanics.join(", "))})`
       for (let [key, value] of Object.entries(data)) {
-        console.log(`${key}: ${JSON.stringify(value)}`);
+        // console.log(`${key}: ${JSON.stringify(value)}`);
       }
       // console.log('index:', index, "\ndata:", data)
 
@@ -42,7 +47,7 @@ Promise.all(bggPromise)
     })
 
     return sqlQuery
-    }
+  }
 
   )
   .then((sqlSeedQuery) => {
