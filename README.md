@@ -18,6 +18,8 @@ PGPORT=5432
 
 Run a the development server with `npm start` in the Host environment. We are only using vagrant for `psql` this week.
 
+Reset the Database with `npm run db:reset`
+
 Both of these achieve the same result.
 
 - Make a `GET` request to `/api/debug/reset` with `curl http://localhost:8001/api/debug/reset`.
