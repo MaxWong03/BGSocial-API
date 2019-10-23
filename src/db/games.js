@@ -21,6 +21,12 @@ const getAllGamesByCategoryID = function (db, categoryid) {
     .then(res => res.rows);
 };
 
+// repeated
+const getAllGamesByCategoryID = function (db, categoryid) {
+  return db.query(`SELECT * FROM game_categories WHERE categories.id = ${categoryid}`)
+    .then(res => res.rows);
+};
+
 // get a list of games owned by one user based on the User id
 const getAllGamesByUserID = function (db, userID) {
   return db.query(`SELECT * FROM user_games WHERE user_games.user_id = ${userID}`)
