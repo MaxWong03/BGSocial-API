@@ -24,8 +24,12 @@ const parseDescription = (desc) => {
 };
 
 const parseNum = (int) => {
- return JSON.stringify(parseInt(int))
+ return JSON.stringify(parseInt(int));
 };
+
+const parseFlo = (float) => {
+  return JSON.stringify(parseFloat(float));
+}
 
 const bggPromise = [];
 let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
@@ -47,7 +51,7 @@ Promise.all(bggPromise)
         ${parseNum(data.playtime.min)},
         ${parseNum(data.playtime.max)},
         ${parseNum(data.id)},
-        ${JSON.stringify(parseFloat(data.rating))}, 
+        ${parseFlo(data.rating)}, 
         ${JSON.stringify(data.thumbnail).replace(/"/g, "'")},
         ${JSON.stringify(data.image).replace(/"/g, "'")},
         ${JSON.stringify(data.categories.join(", ")).replace(/"/g, "'")},
