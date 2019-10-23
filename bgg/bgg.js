@@ -7,12 +7,14 @@ const fs = require('fs');
 const bggPromise = [];
 let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
 
+const generateBGGPromise = (promiseArr, gameNum) => {
+  for (let i = 1; i <= gameNum; i++) {
+    promiseArr.push(bgg.getBoardGameById(i));
+  }
 
-
-
-for (let i = 1; i <= 10; i++) {
-  bggPromise.push(bgg.getBoardGameById(i))
 }
+
+generateBGGPromise(bggPromise, 32);
 
 Promise.all(bggPromise)
   .then((gameData) => {
