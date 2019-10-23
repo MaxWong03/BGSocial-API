@@ -1,6 +1,6 @@
 const bgg = require('boardgamegeek');
 const fs = require('fs');
-const { 
+const {
   parseDescription,
   parseNum,
   parseFlo,
@@ -28,26 +28,22 @@ Promise.all(bggPromise)
     gameData.forEach((data, index) => {
 
       sqlQuery += `(
-        ${parseNum(data.id)},
-        ${parseDoubleQuote(data.name)},
-        ${parseDescription(data.description)},
-        ${parseNum(data.yearpublished)},
-        ${parseNum(data.age.min)},
-        ${parseNum(data.playtime.min)},
-        ${parseNum(data.playtime.max)},
-        ${parseNum(data.id)},
-        ${parseFlo(data.rating)}, 
-        ${parseDoubleQuote(data.thumbnail)},
-        ${parseDoubleQuote(data.image)},
-        ${parseArray(data.categories)},
-        ${parseArray(data.mechanics)})`
-      index === gameData.length - 1 ? sqlQuery += ';\n' : sqlQuery += ',\n'
+        ${parseNum(data.id)}, --id
+        ${parseDoubleQuote(data.name)}, --name
+        ${parseDescription(data.description)}, --description
+        ${parseNum(data.yearpublished)}, --year_published
+        ${parseNum(data.age.min)}, --age
+        ${parseNum(data.playtime.min)}, --play_time_min
+        ${parseNum(data.playtime.max)}, --play_time_max
+        ${parseNum(data.id)}, --bgg_id
+        ${parseFlo(data.rating)}, --rating
+        ${parseDoubleQuote(data.thumbnail)}, --thumbnail
+        ${parseDoubleQuote(data.image)}, --image
+        ${parseArray(data.categories)}, --category
+        ${parseArray(data.mechanics)}) --mechanic`
+      index === gameData.length - 1 ? sqlQuery += '\n;\n' : sqlQuery += '\n,\n'
     })
     return sqlQuery;
-  }
-
-  )
-  .then((sqlSeedQuery) => {
-    fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery);
   })
+  .then((sqlSeedQuery) => fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery));
 
