@@ -1,6 +1,12 @@
 const bgg = require('boardgamegeek');
 const fs = require('fs');
-
+const { 
+  parseDescription,
+  parseNum,
+  parseFlo,
+  parseArray,
+  parseDoubleQuote
+} = require('./helpers/parsers');
 
 // There are 43730 id
 
@@ -9,35 +15,6 @@ const generateBGGPromise = (promiseArr, gameNum) => {
     promiseArr.push(bgg.getBoardGameById(i));
   }
 };
-
-const parseDescription = (desc) => {
-  return JSON.stringify(
-    (
-      desc
-    ) 
-      .replace(/\\/g, '')
-      .replace(/"/g, "'")
-      .replace(/'/g, '')
-      .replace(/\n/g, '')
-    )
-      .replace(/"/g, "'");
-};
-
-const parseNum = (int) => {
- return JSON.stringify(parseInt(int));
-};
-
-const parseFlo = (float) => {
-  return JSON.stringify(parseFloat(float));
-}
-
-const parseArray = (arr) => {
-  return JSON.stringify(arr.join(", ")).replace(/"/g, "'");
-}
-
-const parseDoubleQuote = (quote) => {
-  return JSON.stringify(quote).replace(/"/g, "'")
-}
 
 const bggPromise = [];
 let sqlQuery = 'INSERT INTO games (id, name, description, year_published, age, play_time_min, play_time_max, bgg_id, average_bgg_rating, thumbnail, image, category, mechanic) VALUES\n'
@@ -66,12 +43,11 @@ Promise.all(bggPromise)
         ${parseArray(data.mechanics)})`
       index === gameData.length - 1 ? sqlQuery += ';\n' : sqlQuery += ',\n'
     })
-
-    return sqlQuery
+    return sqlQuery;
   }
 
   )
   .then((sqlSeedQuery) => {
-    fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery)
+    fs.writeFileSync('../src/db/seeds/02_games.sql', sqlSeedQuery);
   })
 
