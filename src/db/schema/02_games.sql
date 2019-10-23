@@ -13,5 +13,5 @@ CREATE TABLE games (
   thumbnail VARCHAR(255),
   image VARCHAR(255),
   category VARCHAR(255),
-  mechanic VARCHAR(255),
+  mechanic VARCHAR(255)
 );
