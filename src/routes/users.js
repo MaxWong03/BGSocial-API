@@ -18,5 +18,12 @@ module.exports = db => {
       })
   });
 
+  router.get("/:id", (req, res) => {
+    getUserById(db, req.params.id)
+      .then(user => {
+        res.json(user);
+      })
+  });
+
   return router;
 };
