@@ -37,10 +37,13 @@ const getAllGamesByEventID = function (db, eventID) {
 };
 
 // find the game a user play in a specific event based on the user id and event id
-// conditions: user must join the event (attendances.is_confirmed = TRUE) 
-const getAllGamesByUserIDNEventID = function (db, userID, eventID) {
-  return db.query(`SELECT * FROM event_games JOIN attendances ON attendances.event_id = event_games.event_id WHERE event_games.event_id = ${eventID} AND attendances.is_confirmed = TRUE AND attendances.attendant_id = ${userID};`)
-    .then(res => res.rows);
-};
+// conditions: user must join the event (attendances.is_confirmed = TRUE)
+// this is commented out since it is too similar with the getAllGamesByEventID
+// since we assume all players in the event will play every game in the event
+//
+// const getAllGamesByUserIDNEventID = function (db, userID, eventID) {
+//   return db.query(`SELECT * FROM event_games JOIN attendances ON attendances.event_id = event_games.event_id WHERE event_games.event_id = ${eventID} AND attendances.is_confirmed = TRUE AND attendances.attendant_id = ${userID};`)
+//     .then(res => res.rows);
+// };
 
-module.exports = { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getAllGamesByEventID, getAllGamesByUserIDNEventID };
+module.exports = { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getAllGamesByEventID };

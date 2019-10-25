@@ -13,7 +13,7 @@ module.exports = db => {
       })
   });
 
-
+  // get one game from public library
   router.get("/games/:gameID", (req, res) => {
     const gameID = req.params.gameID;
     getOnePublicGameByGameID(db, gameID)
@@ -22,8 +22,7 @@ module.exports = db => {
       })
   });
 
-  // NOTICE: save for later
-  // check how the URL will work
+  // find games matching the entered pattern in game library
   router.get("/games/searchNames/:gamePattern", (req, res) => {
     const gamePattern = req.params.gamePattern;
     console.log(gamePattern);
@@ -33,7 +32,7 @@ module.exports = db => {
       })
   });
 
-  // NOTICE: save for later
+  // find games matching the entered Category pattern in game library
   router.get("/games/searchCategories/:categorySearchingPattern", (req, res) => {
     const categorySearchingPattern = req.params.categorySearchingPattern;
     getAllGameIDsByCategorySearchingPattern(db, categorySearchingPattern)
@@ -42,7 +41,7 @@ module.exports = db => {
       })
   });
 
-  // get all the games by user ID
+  // get all the games owned by a user by given user ID
   router.get("/games", (req, res) => {
     const userId = getLoggedUserId(req);
     getAllGamesByUserID(db, userId)
