@@ -13,7 +13,7 @@ const getOnePublicGameByGameID = function (db, gameID) {
 // this happens when a user enter a string pattern in search bar
 // the string can be uncompleted, so here we use ILIKE, which makes the game searching case insensitive
 const getOnePublicGameByPattern = function (db, searchPattern) {
-  return db.query(`SELECT * FROM games WHERE games.name ILIKE $1%`, [searchPattern])
+  return db.query(`SELECT * FROM games WHERE games.name ILIKE ${searchPattern}`)
     .then(res => res.rows);
 };
 
