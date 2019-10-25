@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserById, createUser } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -19,7 +19,7 @@ module.exports = db => {
   });
 
   router.get("/:id", (req, res) => {
-    getUserById(db, req.params.id)
+    getUserByFBId(db, req.params.id)
       .then(user => {
         res.json(user);
       })
