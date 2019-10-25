@@ -13,6 +13,7 @@ module.exports = db => {
       })
   });
 
+
   router.get("/games/:gameID", (req, res) => {
     const gameID = req.params.gameID;
     getOnePublicGameByGameID(db, gameID)
@@ -23,26 +24,17 @@ module.exports = db => {
 
   // NOTICE: save for later
   // check how the URL will work
-  router.get("/games/:gamePattern", (req, res, next) => {
-    
-    const gamePattern = req.params.gamePattern;
-    console.log("A new request received at " + Date.now());
-    console.log(gamePattern);
-    next();
-  });
-
-  router.get("/games/:gamePattern", (req, res) => {
+  router.get("/games/searchNames/:gamePattern", (req, res) => {
     const gamePattern = req.params.gamePattern;
     console.log(gamePattern);
     getOnePublicGameByPattern(db, gamePattern)
       .then(data => {
-        res.json({ games: data });
+        res.json({ gamesMatchingPattern: data });
       })
   });
 
-
   // NOTICE: save for later
-  router.get("/games/:categorySearchingPattern", (req, res) => {
+  router.get("/games/searchCategories/:categorySearchingPattern", (req, res) => {
     const categorySearchingPattern = req.params.categorySearchingPattern;
     getAllGameIDsByCategorySearchingPattern(db, categorySearchingPattern)
       .then(data => {
@@ -69,14 +61,14 @@ module.exports = db => {
   });
 
   // getAllGamesByUserIDNEventID
-  router.get("/event/:eventID/games/testing", (req, res) => {
-    const eventID = req.params.eventID;
-    const userId = getLoggedUserId(req);
-    getAllGamesByEventID(db, userId, eventID)
-      .then(data => {
-        res.json( {getAllGamesByEventID: data} );
-      })
-  });
+  // router.get("/event/:eventID/games/testing", (req, res) => {
+  //   const eventID = req.params.eventID;
+  //   const userId = getLoggedUserId(req);
+  //   getAllGamesByEventID(db, userId, eventID)
+  //     .then(data => {
+  //       res.json( {getAllGamesByEventID: data} );
+  //     })
+  // });
 
   return router;
 };
