@@ -40,9 +40,9 @@ module.exports = function application(
   app.use(bodyparser.json());
 
   // app.use("/api", appointments(db, actions.updateAppointment));
-  app.use("/api/", gamesRouter(db));
+  app.use("/api", gamesRouter(db));
   app.use("/api/users", usersRouter(db));
-  app.use("/api/", playsRouter(db));
+  app.use("/api/plays", playsRouter(db));
   app.use("/api", eventsRouter(db));
 
 
