@@ -41,7 +41,7 @@ module.exports = function application(
 
   // app.use("/api", appointments(db, actions.updateAppointment));
   app.use("/api", gamesRouter(db));
-  app.use("/api", usersRouter(db));
+  app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api", eventsRouter(db));
 
