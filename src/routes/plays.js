@@ -12,7 +12,7 @@ const {
   updateUserPlay,
   updatePlay,
   deletePlay
-} = require('../db/plays.js');
+} = require('../db/selectors/plays');
 
 // Avoiding too many requests, we are returning all related data
 // /plays

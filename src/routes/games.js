@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const { getLoggedUserId } = require('../utils'); // get the user ID based on the login user
-const { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getAllGamesByEventID, getAllGamesByUserIDNEventID } = require('../db/games.js');
+const { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getAllGamesByEventID, getAllGamesByUserIDNEventID } = require('../db/selectors/games');
 
 module.exports = db => {
   // get all the PUBLIC games from database
