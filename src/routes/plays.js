@@ -11,8 +11,12 @@ const {
   updateUserPlay,
   updatePlay,
   deletePlay
+<<<<<<< HEAD
 } = require('../db/plays.js');
 const { getGamesByIds } = require('../db/games.js');
+=======
+} = require('../db/selectors/plays');
+>>>>>>> fa6a2d6b6bebc4fd8822a97252c2adf03e2bada7
 
 // Avoiding too many requests, we are returning all related data
 // /plays
