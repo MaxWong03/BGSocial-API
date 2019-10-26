@@ -5,7 +5,6 @@ const {
   isUserInPlay,
   getPlaysByUserId,
   getPlaysUserByPlayIds,
-  getGamesByIds,
   addPlay,
   addUserPlay,
   deleteUserPlay,
@@ -13,6 +12,7 @@ const {
   updatePlay,
   deletePlay
 } = require('../db/plays.js');
+const { getGamesByIds } = require('../db/games.js');
 
 // Avoiding too many requests, we are returning all related data
 // /plays

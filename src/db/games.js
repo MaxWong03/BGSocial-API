@@ -43,4 +43,18 @@ const getAllGamesByUserIDNEventID = function (db, userID, eventID) {
     .then(res => res.rows);
 };
 
-module.exports = { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getAllGamesByEventID, getAllGamesByUserIDNEventID };
+const getGamesByIds = function (db, gameIds) {
+  return db.query(`SELECT * FROM games WHERE id = ANY($1::int[])`, [gameIds])
+    .then(res => res.rows);
+};
+
+module.exports = {
+  getGamesByIds,
+  getAllGamesFromDB,
+  getOnePublicGameByGameID,
+  getOnePublicGameByPattern,
+  getAllGameIDsByCategorySearchingPattern,
+  getAllGamesByUserID,
+  getAllGamesByEventID,
+  getAllGamesByUserIDNEventID
+};
