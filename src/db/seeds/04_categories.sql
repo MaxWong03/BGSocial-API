@@ -4,4 +4,3 @@ VALUES (1, 'Economic'),
 (3, 'Science Fiction');
 
 SELECT SETVAL('categories_id_seq', 50);
-
