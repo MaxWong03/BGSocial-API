@@ -1,11 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils'); // get the user ID based on the login user
-const { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, addUserGame, removeUserGame } = require('../db/selectors/games');
-
-const user_gamesColumnsNames = [
-  'game_id',
-  'user_id'
-];
+const { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent } = require('../db/selectors/games');
 
 module.exports = db => {
   // get all the PUBLIC games from database
@@ -23,16 +18,7 @@ module.exports = db => {
     addUserGame(db, gameID, userID)
       .then(data => {
         res.json( { message: "successfully added a new game"} );
-      })
-    });
-
-  // get one game from public library
-  router.get("/games/library/:gameID", (req, res) => {
-    const gameID = req.params.gameID;
-    getOnePublicGameByGameID(db, gameID)
-      .then(data => {
-        res.json( { selectedGame: data } );
-      })
+    })
   });
 
   // remove one game from user's game list
@@ -44,6 +30,24 @@ module.exports = db => {
           res.json( { selectedGame: data } );
         })
   });
+
+  // get one game from public library
+  router.get("/games/library/:gameID", (req, res) => {
+    const gameID = req.params.gameID;
+    getOnePublicGameByGameID(db, gameID)
+      .then(data => {
+        res.json( { selectedGame: data } );
+      })
+  });
+
+    // get all the games owned by a user by given user ID
+    router.get("/user/games/:userID", (req, res) => {
+      const userId = req.params.userID;
+      getAllGamesByUserID(db, userId)
+        .then(data => {
+          res.json( {gamesByUserID: data} );
+        })
+    });
 
   // find games matching the entered pattern in game library
   router.get("/games/library/searchNames/:gamePattern", (req, res) => {
@@ -65,15 +69,6 @@ module.exports = db => {
   });
 
   // get all the games owned by a user by given user ID
-  router.get("/user/games/:userID", (req, res) => {
-    const userId = req.params.userID;
-    getAllGamesByUserID(db, userId)
-      .then(data => {
-        res.json( {gamesByUserID: data} );
-      })
-  });
-
-  // get all the games owned by a user by given user ID
   router.get("/user/games/:userID/:gameID", (req, res) => {
     const userID = req.params.userID;
     const gameID = req.params.gameID;
@@ -82,7 +77,7 @@ module.exports = db => {
         res.json( {aGameByUserIDGameID: data} );
       })
   });
-  
+
   router.get("/event/:eventID/games", (req, res) => {
     const eventID = req.params.eventID;
     getAllGamesByEventID(db, eventID)
