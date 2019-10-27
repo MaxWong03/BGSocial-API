@@ -14,12 +14,12 @@ const createUser = (db) => {
     .catch(error => console.log("Error Creating User:" ,error));
 };
 
-
-const getUserById = (db, userId) => {
+const getUserByFBId = (db, fbId) => {
   return db.query(`
-    SELECT * FROM users WHERE id = $1
-  `, [userId])
-    .then(res => res.rows[0]);
+    SELECT * FROM users WHERE fb_id = $1
+  `, [fbId])
+    .then(res => res.rows[0])
+    .catch(error => console.log('getUserByFBId Error:', error));
 };
 
 const getFriendsIdByUserId = (db, userId)  => {
@@ -37,7 +37,7 @@ const getFriendsIdByUserId = (db, userId)  => {
 
 module.exports = {
   getAllUsers,
-  getUserById,
+  getUserByFBId,
   createUser,
   getFriendsIdByUserId
 }
