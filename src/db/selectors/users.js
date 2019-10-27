@@ -15,15 +15,29 @@ const createUser = (db) => {
 };
 
 
-const getUserById = (db, userId) => {
+const getUserByFBId = (db, fbId) => {
   return db.query(`
-    SELECT * FROM users WHERE id = $1
-  `, [userId])
-    .then(res => res.rows[0]);
+    SELECT * FROM users WHERE fb_id = $1
+  `, [fbId])
+    .then(res => res.rows[0])
+    .catch(error => console.log('getUserByFBId Error:', error));
+};
+
+const getFriendsIdByUserId = (db, userId)  => {
+  return db.query(`
+    SELECT * 
+    FROM friends 
+    WHERE (user1_id = $1 OR user2_id = $2) AND is_accepted = TRUE
+`, [userId, userId])
+  .then(res => {
+    const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
+    return friendsIds;
+  });
 };
 
 module.exports = {
   getAllUsers,
-  getUserById,
-  createUser
+  getUserByFBId,
+  createUser,
+  getFriendsIdByUserId
 }
