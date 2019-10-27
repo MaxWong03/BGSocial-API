@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserById, createUser } = require('../db/selectors/users');
+const { getAllUsers, getUserById, createUser, getFriendsByUserId } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -15,6 +15,16 @@ module.exports = db => {
     createUser(db)
       .then(data => {
         res.status(204).json({});
+      })
+  });
+  
+  router.get("/friends", (req, res) => {
+    const userId = getLoggedUserId(req);
+    console.log('afeter');
+    getFriendsIdByUserId(db, userId)
+      .then(users => {
+        // friends = users.filter(friend => playUser.play_id == play.id);
+        res.json(users);
       })
   });
 

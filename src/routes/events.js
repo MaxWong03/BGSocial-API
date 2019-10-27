@@ -13,7 +13,7 @@ const {
 
 } = require('../db/events.js');
 
-const { getGamesByIds } = require('../db/games.js');
+const { getGamesByIds } = require('../db/selectors/games.js');
 
 
 module.exports = db => {

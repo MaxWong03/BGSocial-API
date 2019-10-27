@@ -22,8 +22,22 @@ const getUserById = (db, userId) => {
     .then(res => res.rows[0]);
 };
 
+const getFriendsIdByUserId = (db, userId)  => {
+  console.log('userId', userId);
+  return db.query(`
+    SELECT * 
+    FROM friends 
+    WHERE (user1_id = $1 OR user2_id = $2) AND is_accepted = TRUE
+`, [userId, userId])
+  .then(res => {
+    const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
+    return friendsIds;
+  });
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
-  createUser
+  createUser,
+  getFriendsIdByUserId
 }
