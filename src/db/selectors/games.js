@@ -5,9 +5,14 @@ const getAllGamesFromDB = function (db) {
     .then(res => res.rows);
 };
 
-const addUserGamesgetOnePublicGameByGameID = function (db, gameID) {
-  // return db.query(`SELECT * FROM games WHERE games.id = $1`, [gameID])
-  //   .then(res => res.rows);
+const addUserGame = function (db, gameID, userID ) {
+  return db.query(`INSERT INTO user_games (game_id, user_id) VALUES (${gameID}, ${userID});`)
+    .then(res => res);
+};
+
+const removeUserGame = function ( db, gameID, userID ){
+  return db.query(`DELETE FROM user_games WHERE user_id = ${userID} AND game_id = ${gameID};`)
+    .then(res => res);
 };
 
 const getOnePublicGameByGameID = function (db, gameID) {
@@ -57,9 +62,10 @@ const getAllGamesForPlayerInEvent = function (db, userID, eventID) {
     .then(res => res.rows);
 };
 
-const addUserGame = function (db, gameID, userID ) {
-  return db.query(`INSERT INTO user_games (game_id, user_id) VALUES (${gameID}, ${userID});`)
-    .then(res => res);
+
+
+const winPercentageOfAGameForAPlayer = function(){
+
 };
 
-module.exports = { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getOneGameByUserID, getAllGamesForPlayerInEvent, addUserGame };
+module.exports = { getAllGamesFromDB, getOnePublicGameByGameID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getAllGamesByUserID, getOneGameByUserID, getAllGamesByEventID,getAllGamesForPlayerInEvent, addUserGame, removeUserGame };
