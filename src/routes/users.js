@@ -28,6 +28,9 @@ module.exports = db => {
 
   router.get("/:id/friends", (req, res) => {
     getFriendsByUserID(db, req.params.id)
+      .then(friends => {
+        res.json(friends);
+      });
   });
 
   return router;
