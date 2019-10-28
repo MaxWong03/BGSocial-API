@@ -12,26 +12,29 @@ module.exports = db => {
       })
   });
 
+  // ok
   router.post("/user/:userID/game/:gameID", (req, res) => {
     const userID = req.params.userID;
     const gameID = req.params.gameID;
     addUserGame(db, gameID, userID)
       .then(data => {
-        res.json( { message: "successfully added a new game"} );
+        res.json( { message: `successfully added a new game for user with ID ${userID}`} );
     })
   });
 
   // remove one game from user's game list
+  // ok
   router.post("/user/:userID/game/:gameID/delete", (req, res) => {
     const gameID = req.params.gameID;
     const userID = req.params.userID;
     removeUserGame(db, gameID, userID)
         .then(data => {
-          res.json( { game: data } );
+          res.json( { game: "sucessfully delele a game" } );
         })
   });
 
   // get one game from public library
+  // ok
   router.get("/games/library/:gameID", (req, res) => {
     const gameID = req.params.gameID;
     getOnePublicGameByGameID(db, gameID)
@@ -41,11 +44,12 @@ module.exports = db => {
   });
 
     // get all the games owned by a user by given user ID
+    // ok
     router.get("/user/games/:userID", (req, res) => {
-      const userId = req.params.userID;
-      getAllGamesByUserID(db, userId)
+      const userID = req.params.userID;
+      getAllGamesByUserID(db, userID)
         .then(data => {
-          res.json( {gamesByUserID: data} );
+          res.json( {games: data} );
         })
     });
 
@@ -61,6 +65,7 @@ module.exports = db => {
   });
 
   // find games matching the entered Category pattern in game library
+
   router.get("/games/library/searchCategories/:categorySearchingPattern", (req, res) => {
     const categorySearchingPattern = req.params.categorySearchingPattern;
     getAllGameIDsByCategorySearchingPattern(db, categorySearchingPattern)
@@ -69,7 +74,8 @@ module.exports = db => {
       })
   });
 
-  // get all the games owned by a user by given user ID
+  // get one game owned by a user by given user ID
+  // ok
   router.get("/user/games/:userID/:gameID", (req, res) => {
     const userID = req.params.userID;
     const gameID = req.params.gameID;
@@ -79,6 +85,7 @@ module.exports = db => {
       })
   });
 
+  // ok
   router.get("/event/:eventID/games", (req, res) => {
     const eventID = req.params.eventID;
     getAllGamesByEventID(db, eventID)
@@ -87,10 +94,12 @@ module.exports = db => {
       })
   });
 
+  // get all the games a player plays in one event
+  // ok
   router.get("/event/:eventID/games/:userID/", (req, res) => {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-    getAllGamesForPlayerInEvent(db, userId, eventID)
+    getAllGamesForPlayerInEvent(db, userID, eventID)
       .then(data => {
         res.json( {Games: data} );
       })

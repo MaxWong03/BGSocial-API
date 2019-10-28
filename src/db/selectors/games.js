@@ -48,7 +48,7 @@ const getOneGameByUserID = function (db, userID, gameID) {
 
 // get all the games for one specific even
 const getAllGamesByEventID = function (db, eventID) {
-  return db.query(`  select games.* from event_games JOIN games ON games.id = event_games.game_id where event_id = $1`, [eventID])
+  return db.query(`select games.* from event_games JOIN games ON games.id = event_games.game_id where event_id = $1`, [eventID])
     .then(res => res.rows);
 };
 
@@ -61,7 +61,7 @@ const getAllGamesForPlayerInEvent = function (db, userID, eventID) {
 };
 
 const winPercentageOfAGameForAPlayer = function(){
-
+  
 };
 
 module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent } ;
