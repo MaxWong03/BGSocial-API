@@ -58,6 +58,5 @@ module.exports = {
   getOnePublicGameByPattern,
   getAllGameIDsByCategorySearchingPattern,
   getAllGamesByUserID,
-  getAllGamesByEventID,
-  getAllGamesByUserIDNEventID
+  getAllGamesByEventID
 };
