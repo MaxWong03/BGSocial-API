@@ -62,8 +62,21 @@ const getAllGamesForPlayerInEvent = function (db, userID, eventID) {
     .then(res => res.rows);
 };
 
-const winPercentageOfAGameForAPlayer = function(){
-  
+// count the win percentate for a user and one game
+const winPercentageOfAGameForAPlayer = function(db, userID, gameID){
+  return db.query(`SELECT ROUND(
+    100.0 * (
+      select count(plays_users.is_winner) from plays_users 
+      JOIN plays ON plays.id = plays_users.play_id 
+      WHERE user_id = $1 AND plays.game_id = $2 AND plays_users.is_winner = TRUE
+    ) / 
+    ( select count(plays_users.is_winner))  
+  ) as percent_total
+  From plays_users 
+  JOIN plays ON plays.id = plays_users.play_id 
+  WHERE user_id = $1 AND plays.game_id = $2;`, 
+  [userID, gameID])
+  .then(res => res.rows);
 };
 
-module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern } ;
+module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern, winPercentageOfAGameForAPlayer } ;

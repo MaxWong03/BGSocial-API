@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils'); // get the user ID based on the login user
-const { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern } = require('../db/selectors/games');
+const { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern, winPercentageOfAGameForAPlayer } = require('../db/selectors/games');
 
 module.exports = db => {
 
@@ -99,5 +99,17 @@ module.exports = db => {
         res.json( {games: data} );
       })
   });
+
+  // get one game owned by a user by given user ID
+  // ok
+  router.get("/user/games/:userID/:gameID/win", (req, res) => {
+    const userID = req.params.userID;
+    const gameID = req.params.gameID;
+    winPercentageOfAGameForAPlayer(db, userID, gameID)
+      .then(data => {
+        res.json( {winPercentage: data} );
+      })
+  });
+
   return router;
 };
