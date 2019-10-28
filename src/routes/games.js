@@ -8,7 +8,7 @@ module.exports = db => {
   router.get("games/library", (req, res) => {
     getAllGamesFromDB(db)
       .then(data => {
-        res.json({ allLibraryGames: data });
+        res.json({ games: data });
       })
   });
 
@@ -27,7 +27,7 @@ module.exports = db => {
     const userID = req.params.userID;
     removeUserGame(db, gameID, userID)
         .then(data => {
-          res.json( { selectedGame: data } );
+          res.json( { game: data } );
         })
   });
 
@@ -75,7 +75,7 @@ module.exports = db => {
     const gameID = req.params.gameID;
     getOneGameByUserID(db, userID, gameID)
       .then(data => {
-        res.json( {aGameByUserIDGameID: data} );
+        res.json( {game: data} );
       })
   });
 
@@ -92,7 +92,7 @@ module.exports = db => {
     const userID = req.params.userID;
     getAllGamesForPlayerInEvent(db, userId, eventID)
       .then(data => {
-        res.json( {getAllGamesByEventID: data} );
+        res.json( {Games: data} );
       })
   });
   return router;
