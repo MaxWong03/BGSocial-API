@@ -29,15 +29,17 @@ const getAllGamesByUserID = function (db, userID) {
 // this happens when a user enter a string pattern in search bar
 // the string can be uncompleted, so here we use ILIKE, which makes the game searching case insensitive
 const getOnePublicGameByPattern = function (db, searchPattern) {
-  return db.query(`SELECT * FROM games WHERE games.name ILIKE '$1%'`, [searchPattern])
+  return db.query(`SELECT * FROM games WHERE games.name ILIKE $1||'%'`, [searchPattern])
     .then(res => res.rows);
 };
 
 // get a list of games by searching the categories name using ILIKE
 // just save it for now, since the app wont be able to search the games by uncompleted/ case insensitived categories names
 const getAllGameIDsByCategorySearchingPattern = function (db, categorySearchingPattern) {
-  return db.query(`select * from games where category ILIKE '%$1%'`, [categorySearchingPattern])
-    .then(res => res.rows);
+  return db.query(`select * from games where category ILIKE '%'||$1||'%'`, [categorySearchingPattern])
+    .then(
+      res => res.rows
+    );
 }
 
 // get a game owned by one user based on the User id and game ID
@@ -64,4 +66,4 @@ const winPercentageOfAGameForAPlayer = function(){
   
 };
 
-module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID, getOnePublicGameByPattern, getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent } ;
+module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern } ;
