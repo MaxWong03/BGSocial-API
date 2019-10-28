@@ -9,7 +9,9 @@ const {
   getEventById,
   getDatesByEventId,
   getAttendantsByEventId,
-  getGamesByEventId
+  getGamesByEventId,
+  getAllEventsByAttendantId,
+  getGamesByEvent
 
 } = require('../db/events.js');
 
@@ -17,6 +19,24 @@ const { getGamesByIds } = require('../db/selectors/games.js');
 
 
 module.exports = db => {
+
+  router.get("/", async (req, res) => {
+    const userId = getLoggedUserId(req);
+    try {
+      const events = await getAllEventsByAttendantId(db, userId);
+      const eventsIds = events.map(event => event.id);
+      const gamesByEvent = await Promise.all(eventsIds.map(eventId => getGamesByEvent(db, eventId)));
+      events.forEach((event, index) => {
+        event.event_games = gamesByEvent[index]
+      });
+      res.json(events);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: error });
+      console.log(error);
+    }
+  });
 
   router.get("/:id", async (req, res) => {
     try {
@@ -72,7 +92,7 @@ module.exports = db => {
         Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
       ]);
       res.json({ ...event, eventDates, eventAttendants, eventGames });
-    } 
+    }
     catch (error) {
       res
         .status(500)

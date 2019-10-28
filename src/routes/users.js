@@ -20,7 +20,6 @@ module.exports = db => {
   
   router.get("/friends", (req, res) => {
     const userId = getLoggedUserId(req);
-    console.log('afeter');
     getFriendsIdByUserId(db, userId)
       .then(users => {
         // friends = users.filter(friend => playUser.play_id == play.id);

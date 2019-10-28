@@ -1,10 +1,3 @@
-const playsColumnsNames = [
-  'date',
-  'duration',
-  'game_id',
-  'event_id'
-];
-
 const eventDatesColumnsNames = [
   'is_chosen',
   'is_open',
@@ -12,6 +5,37 @@ const eventDatesColumnsNames = [
   'location',
   'event_id'
 ];
+
+const getAllEventsByAttendantId = function(db, userID) {
+return db.query(`SELECT events.*, 
+  chosen_event_dates.date as "event_dates.date", chosen_event_dates.location as "event_dates.location" 
+  FROM attendances
+  JOIN events ON attendances.event_id = events.id
+  LEFT JOIN (SELECT * FROM event_dates WHERE event_dates.is_chosen = TRUE) as chosen_event_dates on events.id = chosen_event_dates.event_id
+  WHERE 
+  attendances.attendant_id = $1`, [userID])
+  .then(res => {
+    return res.rows.map(row => {
+      const newRow = {...row};
+      newRow.chosen_event_date = {
+        'date': row['event_dates.date'],
+        'location': row['event_dates.location'],
+      };
+      delete newRow['event_dates.date'];
+      delete newRow['event_dates.location'];
+      return newRow;
+    });
+  });
+};
+
+const getGamesByEvent = function(db, eventID) {
+  return db.query(`SELECT  games.* FROM event_games JOIN games ON games.id = event_games.game_id 
+  WHERE event_games.event_id = $1`, [eventID])
+  .then(function (res) {
+    return res.rows;
+  }).catch(err => console.log(err));
+};
+
 
 const createEvent = function (db, userID) {
   return db.query(`INSERT INTO events (owner_id)
@@ -183,6 +207,8 @@ module.exports = {
   getEventById,
   getDatesByEventId,
   getAttendantsByEventId,
-  getGamesByEventId
+  getGamesByEventId,
+  getAllEventsByAttendantId,
+  getGamesByEvent
 };
 
