@@ -4,46 +4,26 @@ const { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID
 
 module.exports = db => {
 
-  // find games matching the entered pattern in game library
-
-  // router.get("/games/library/?name=", (req, res) => {
-  //   let namePattern = req.query.name;
-  //   // const gamePattern = req.params.gamePattern;
-  //   getOnePublicGameByPattern(db, namePattern)
-  //   .then(data => {
-  //     res.json({
-  //       matchingGames: data
-  //     });
-  //   })
-  // });
-
-  // get all the PUBLIC games from database
   // this is refered as all game library
-  router.get("/games/library", (req, res) => {
+  router.get("/games/library", (req, res) => {   // find games matching the entered pattern in game library
     let namePattern = req.query.name;
     let catePattern = req.query.category;
     if (namePattern !== undefined) {
       getOnePublicGameByPattern(db, namePattern)
       .then(data => {
-        res.json({
-          matchingGames: data
-        });
+        res.json({ games: data });
       })
     }
-    else if (catePattern !== undefined) {
+    else if (catePattern !== undefined) { // find games matching the entered Category pattern in game library
       getAllGameIDsByCategorySearchingPattern(db, catePattern)
       .then(data => {
         res.json({ games: data });
       })
     }
     else {
-      // const string = "" + typeof(namePattern);
       getAllGamesFromDB(db)
       .then(data => {
-        res.json({
-          games: data,
-          // pattern: "" + string 
-        });
+        res.json({ games: data });
       })
     }
   });
@@ -88,29 +68,6 @@ module.exports = db => {
         res.json( {games: data} );
       })
   });
-
-  // find games matching the entered pattern in game library
-  // router.get("/games/library/?name=:pattern", (req, res) => {
-  //   console.log(req);
-  //   const pattern = req.params.pattern;
-  //   // const gamePattern = req.params.gamePattern;
-  //   getOnePublicGameByPattern(db, pattern)
-  //     .then(data => {
-  //       res.json({
-  //         games: data,
-  //       });
-  //     })
-  // });
-
-  // find games matching the entered Category pattern in game library
-
-  // router.get("/games/library/searchCategories/:categorySearchingPattern", (req, res) => {
-  //   const categorySearchingPattern = req.params.categorySearchingPattern;
-  //   getAllGameIDsByCategorySearchingPattern(db, categorySearchingPattern)
-  //     .then(data => {
-  //       res.json({ games: data });
-  //     })
-  // });
 
   // get one game owned by a user by given user ID
   // ok
