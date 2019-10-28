@@ -25,14 +25,21 @@ const getUserByFBId = (db, fbId) => {
 
 const getFriendsIdByUserId = (db, userId) => {
   return db.query(`
-  Select user2_id AS friend_id, users.name AS friend_name, users.avatar AS friend_avatar
-  FROM friends JOIN users 
-  on user2_id = users.id
-  where user1_id = $1 
-  AND is_accepted IS TRUE
-`, [userId])
-    .then(res => res.rows)
-    .catch(err => console.log('getFriendsIdByUserId Error:', err))
+    SELECT * 
+    FROM friends 
+    WHERE (user1_id = $1 OR user2_id = $2) AND is_accepted = TRUE
+`, [userId, userId])
+  .then(res => {
+    const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
+    return db.query(`
+    SELECT * 
+    FROM users 
+    WHERE users.id = ANY($1::int[])
+`, [friendsIds])
+  })
+  .then(res => res.rows)
+  .catch(error => console.log('getUserByFBId Error:', error));
+
 };
 
 module.exports = {
