@@ -12,7 +12,7 @@ module.exports = db => {
       })
   });
 
-  router.post("/user/newGame/:userID/:gameID", (req, res) => {
+  router.post("/user/:userID/game/:gameID", (req, res) => {
     const userID = req.params.userID;
     const gameID = req.params.gameID;
     addUserGame(db, gameID, userID)
@@ -22,7 +22,7 @@ module.exports = db => {
   });
 
   // remove one game from user's game list
-  router.get("/user/:userID/removeGame/:gameID", (req, res) => {
+  router.post("/user/:userID/game/:gameID/delete", (req, res) => {
     const gameID = req.params.gameID;
     const userID = req.params.userID;
     removeUserGame(db, gameID, userID)
@@ -50,8 +50,9 @@ module.exports = db => {
     });
 
   // find games matching the entered pattern in game library
-  router.get("/games/library/searchNames/:gamePattern", (req, res) => {
-    const gamePattern = req.params.gamePattern;
+  router.get("/games/library/name?game-pattern=:gamePattern", (req, res) => {
+    console.log(req);
+    const gamePattern = req.params.game-pattern;
     console.log(gamePattern);
     getOnePublicGameByPattern(db, gamePattern)
       .then(data => {
