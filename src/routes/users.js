@@ -17,6 +17,15 @@ module.exports = db => {
         res.status(204).json({});
       })
   });
+  
+  router.get("/friends", (req, res) => {
+    const userId = getLoggedUserId(req);
+    getFriendsIdByUserId(db, userId)
+      .then(users => {
+        // friends = users.filter(friend => playUser.play_id == play.id);
+        res.json(users);
+      })
+  });
 
   router.get("/facebook/:id", (req, res) => {
     getUserByFBId(db, req.params.id)

@@ -14,7 +14,6 @@ const createUser = (db) => {
     .catch(error => console.log("Error Creating User:", error));
 };
 
-
 const getUserByFBId = (db, fbId) => {
   return db.query(`
     SELECT * FROM users WHERE fb_id = $1
@@ -23,8 +22,8 @@ const getUserByFBId = (db, fbId) => {
     .catch(error => console.log('getUserByFBId Error:', error));
 };
 
+
 const getFriendsIdByUserId = (db, userId) => {
-  //friend name, friend avatar
   return db.query(`
   Select user2_id AS friend_id, users.name AS friend_name, users.avatar AS friend_avatar
   FROM friends JOIN users 
