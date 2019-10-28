@@ -79,4 +79,19 @@ const winPercentageOfAGameForAPlayer = function(db, userID, gameID){
   .then(res => res.rows);
 };
 
-module.exports = { getAllGamesFromDB, addUserGame, removeUserGame, getOnePublicGameByGameID, getAllGamesByUserID,  getAllGameIDsByCategorySearchingPattern, getOneGameByUserID, getAllGamesByEventID, getAllGamesForPlayerInEvent, getOnePublicGameByPattern, winPercentageOfAGameForAPlayer } ;
+
+const getGamesByIds = function (db, gameIds) {
+  return db.query(`SELECT * FROM games WHERE id = ANY($1::int[])`, [gameIds])
+    .then(res => res.rows);
+};
+
+module.exports = {
+  getGamesByIds,
+  getAllGamesFromDB,
+  getOnePublicGameByGameID,
+  getOnePublicGameByPattern,
+  getAllGameIDsByCategorySearchingPattern,
+  getAllGamesByUserID,
+  getAllGamesByEventID
+};
+

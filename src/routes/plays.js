@@ -5,7 +5,6 @@ const {
   isUserInPlay,
   getPlaysByUserId,
   getPlaysUserByPlayIds,
-  getGamesByIds,
   addPlay,
   addUserPlay,
   deleteUserPlay,

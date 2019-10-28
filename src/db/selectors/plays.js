@@ -12,11 +12,6 @@ const playsUsersColumnsNames = [
   'play_id'
 ];
 
-const getGamesByIds = function (db, gameIds) {
-  return db.query(`SELECT * FROM games WHERE id = ANY($1::int[])`, [gameIds])
-    .then(res => res.rows);
-};
-
 const getPlaysByUserId = function (db, userId) {
   return db.query(`SELECT plays.*
    FROM plays_users JOIN plays ON plays_users.play_id = plays.id
@@ -38,6 +33,7 @@ const isUserInPlay = function (db, playId, userId) {
 //     .then(res => res.rows);
 // };
 
+//https://stackoverflow.com/questions/10720420/node-postgres-how-to-execute-where-col-in-dynamic-value-list-query
 const getPlaysUserByPlayIds = function (db, playIds) {
   return db.query(`SELECT plays_users.*
    FROM plays_users JOIN plays ON plays_users.play_id = plays.id
@@ -122,7 +118,6 @@ const deletePlay = function (db, id) {
 
 module.exports = {
   isUserInPlay,
-  getGamesByIds,
   getPlaysByUserId,
   getPlaysUserByPlayIds,
   addPlay,
