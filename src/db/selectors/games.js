@@ -79,19 +79,27 @@ const winPercentageOfAGameForAPlayer = function(db, userID, gameID){
   .then(res => res.rows);
 };
 
-
 const getGamesByIds = function (db, gameIds) {
   return db.query(`SELECT * FROM games WHERE id = ANY($1::int[])`, [gameIds])
     .then(res => res.rows);
 };
 
-module.exports = {
-  getGamesByIds,
-  getAllGamesFromDB,
-  getOnePublicGameByGameID,
-  getOnePublicGameByPattern,
-  getAllGameIDsByCategorySearchingPattern,
-  getAllGamesByUserID,
-  getAllGamesByEventID
+const getLastPlayForGame = function (db, userID, gameID) {
+  return db.query(`SELECT plays.date ::timestamp FROM plays JOIN plays_users ON plays.id = plays_users.play_id WHERE plays_users.user_id = $1 AND plays.game_id = $2 ORDER BY date DESC LIMIT 1;`, [userID, gameID])
+    .then(res => res.rows);
 };
 
+module.exports = { getAllGamesFromDB,
+  addUserGame,
+  removeUserGame,
+  getOnePublicGameByGameID,
+  getAllGamesByUserID,
+  getAllGameIDsByCategorySearchingPattern,
+  getOneGameByUserID,
+  getAllGamesByEventID,
+  getAllGamesForPlayerInEvent,
+  getOnePublicGameByPattern,
+  winPercentageOfAGameForAPlayer,
+  getGamesByIds,
+  getLastPlayForGame
+}
