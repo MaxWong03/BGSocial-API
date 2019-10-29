@@ -6,34 +6,34 @@ const eventDatesColumnsNames = [
   'event_id'
 ];
 
-const getAllEventsByAttendantId = function(db, userID) {
-return db.query(`SELECT events.*, 
+const getAllEventsByAttendantId = function (db, userID) {
+  return db.query(`SELECT events.*, 
   chosen_event_dates.date as "event_dates.date", chosen_event_dates.location as "event_dates.location" 
   FROM attendances
   JOIN events ON attendances.event_id = events.id
   LEFT JOIN (SELECT * FROM event_dates WHERE event_dates.is_chosen = TRUE) as chosen_event_dates on events.id = chosen_event_dates.event_id
   WHERE 
   attendances.attendant_id = $1`, [userID])
-  .then(res => {
-    return res.rows.map(row => {
-      const newRow = {...row};
-      newRow.chosen_event_date = {
-        'date': row['event_dates.date'],
-        'location': row['event_dates.location'],
-      };
-      delete newRow['event_dates.date'];
-      delete newRow['event_dates.location'];
-      return newRow;
+    .then(res => {
+      return res.rows.map(row => {
+        const newRow = { ...row };
+        newRow.chosen_event_date = {
+          'date': row['event_dates.date'],
+          'location': row['event_dates.location'],
+        };
+        delete newRow['event_dates.date'];
+        delete newRow['event_dates.location'];
+        return newRow;
+      });
     });
-  });
 };
 
-const getGamesByEvent = function(db, eventID) {
+const getGamesByEvent = function (db, eventID) {
   return db.query(`SELECT  games.* FROM event_games JOIN games ON games.id = event_games.game_id 
   WHERE event_games.event_id = $1`, [eventID])
-  .then(function (res) {
-    return res.rows;
-  }).catch(err => console.log(err));
+    .then(function (res) {
+      return res.rows;
+    }).catch(err => console.log(err));
 };
 
 
@@ -91,8 +91,17 @@ const getDatesByEventId = function (db, eventId) {
 };
 
 const getAttendantsByEventId = function (db, eventId) {
-  return db.query(`SELECT * FROM attendances WHERE event_id = $1`, [eventId])
-    .then(res => res.rows);
+  return db.query(`SELECT * FROM attendances JOIN users 
+  ON attendances.attendant_id = users.id
+  WHERE event_id = $1`, [eventId])
+    .then(res => res.rows)
+    .catch(err => console.log(err));
+};
+
+const getVotesByDateId = function (db, eventDateId) {
+  return db.query(`SELECT * FROM event_dates_votes WHERE event_date_id = $1`, [eventDateId])
+    .then(res => res.rows)
+    .catch(err => console.log(err));
 };
 
 const getGamesByEventId = function (db, eventId) {
@@ -209,6 +218,8 @@ module.exports = {
   getAttendantsByEventId,
   getGamesByEventId,
   getAllEventsByAttendantId,
-  getGamesByEvent
+  getGamesByEvent,
+  getAttendantsByEventId,
+  getVotesByDateId
 };
 

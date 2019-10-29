@@ -11,7 +11,8 @@ const {
   getAttendantsByEventId,
   getGamesByEventId,
   getAllEventsByAttendantId,
-  getGamesByEvent
+  getGamesByEvent,
+  getVotesByDateId
 
 } = require('../db/events.js');
 
@@ -26,8 +27,15 @@ module.exports = db => {
       const events = await getAllEventsByAttendantId(db, userId);
       const eventsIds = events.map(event => event.id);
       const gamesByEvent = await Promise.all(eventsIds.map(eventId => getGamesByEvent(db, eventId)));
+      const attendantsByEvent = await Promise.all(eventsIds.map(eventId => getAttendantsByEventId(db, eventId)));
+      const eventsDates = await Promise.all(eventsIds.map(eventId => getDatesByEventId(db, eventId)));
+      // const eventsDatesIds = eventsDates.map(eventDate => )
+      // console.log(eventsDatesIds)
+      // const votesByEvent = await Promise.all(eventsDatesIds.map(eventDateId => getVotesByDateId(db, eventDateId)));
       events.forEach((event, index) => {
         event.event_games = gamesByEvent[index]
+        event.event_attendants = attendantsByEvent[index]
+        event.event_dates = eventsDates[index]
       });
       res.json(events);
     } catch (error) {
