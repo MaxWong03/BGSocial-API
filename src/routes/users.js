@@ -36,7 +36,6 @@ module.exports = db => {
 
   router.get("/friends", (req, res) => {
     const userId = getLoggedUserId(req);
-    console.log(typeof userId)
     getFriendsIdByUserId(db, userId)
       .then(users => {
         res.json(users);
@@ -44,7 +43,6 @@ module.exports = db => {
   });
 
   router.get("/:id/friends", (req, res) => {
-    console.log(typeof req.params.id)
     getFriendsIdByUserId(db, Number(req.params.id))
       .then(friends => {
         res.json(friends);
