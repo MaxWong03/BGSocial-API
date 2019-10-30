@@ -12,9 +12,13 @@ const {
   getGamesByEventId,
   getAllEventsByAttendantId,
   getGamesByEvent,
-  getVotesByDateId
+  getVotesByDateId,
+  deleteEventByEventId,
+  getVotesByEventId,
+  confirmDateByEventId,
+  doesUserOwnsEvent
 
-} = require('../db/events.js');
+} = require('../db/selectors/events.js');
 
 const { getGamesByIds } = require('../db/selectors/games.js');
 
@@ -29,9 +33,6 @@ module.exports = db => {
       const gamesByEvent = await Promise.all(eventsIds.map(eventId => getGamesByEvent(db, eventId)));
       const attendantsByEvent = await Promise.all(eventsIds.map(eventId => getAttendantsByEventId(db, eventId)));
       const eventsDates = await Promise.all(eventsIds.map(eventId => getDatesByEventId(db, eventId)));
-      // const eventsDatesIds = eventsDates.map(eventDate => )
-      // console.log(eventsDatesIds)
-      // const votesByEvent = await Promise.all(eventsDatesIds.map(eventDateId => getVotesByDateId(db, eventDateId)));
       events.forEach((event, index) => {
         event.event_games = gamesByEvent[index]
         event.event_attendants = attendantsByEvent[index]
@@ -48,11 +49,12 @@ module.exports = db => {
 
   router.get("/:id", async (req, res) => {
     try {
-      const [event, eventDates, eventAttendants, eventGames] = await Promise.all([
+      const [event, eventDates, eventAttendants, eventGames, eventVotes] = await Promise.all([
         getEventById(db, req.params.id),
         getDatesByEventId(db, req.params.id),
         getAttendantsByEventId(db, req.params.id),
-        getGamesByEventId(db, req.params.id)
+        getGamesByEventId(db, req.params.id),
+        getVotesByEventId(db, req.params.id)
       ]);
       const gameIds = eventGames.map(eventGame => eventGame.game_id);
       const games = await getGamesByIds(db, gameIds);
@@ -61,7 +63,13 @@ module.exports = db => {
         eventGame.game = games.find(game => game.id === eventGame.game_id);
       });
 
-      const response = { ...event, eventDates, eventAttendants, eventGames };
+      const response = {
+        ...event,
+        event_dates: eventDates,
+        event_attendants: eventAttendants,
+        event_games: eventGames,
+        event_votes: eventVotes
+      };
       res.json(response);
     } catch (error) {
       res
@@ -69,24 +77,6 @@ module.exports = db => {
         .json({ error: error });
       console.log(error);
     }
-
-    //   Promise.all([
-    //     getPlaysUserByPlayIds(db, playsIds),
-    //     getGamesByIds(db, gameIds)
-    //   ]).then(([playsUsers, games]) => {
-    //     const gamesById = games.reduce((accum, item) => {
-    //       accum[item.id] = item;
-    //       return accum;
-    //     }, {});
-
-    //     plays.forEach(play => {
-    //       play.playsUsers = playsUsers.filter(playUser => playUser.play_id == play.id);
-    //     });
-
-    //     res.json({ plays: plays, games: gamesById });
-    //   }).catch(e => console.log(e));
-
-    // });
   });
 
   router.post("/", async (req, res) => {
@@ -99,7 +89,7 @@ module.exports = db => {
         Promise.all(req.body.eventAttendants.map(eventAttendant => addEventAttendant(db, { ...eventAttendant, event_id: event.id }))),
         Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
       ]);
-      res.json({ ...event, eventDates, eventAttendants, eventGames });
+      res.json({ ...event, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames });
     }
     catch (error) {
       res
@@ -138,6 +128,39 @@ module.exports = db => {
           res.json(eventGamesPromises);
         })
         .catch(err => {
+          res
+            .status(500)
+            .json({ error: err.message });
+        });
+    }
+  });
+
+  router.post("/:id/delete", (req, res) => {
+    const userId = getLoggedUserId(req);
+    deleteEventByEventId(db, req.params.id, userId)
+      .then(() => {
+        console.log("success");
+        res.send("Success");
+      })
+      .catch(err => {
+        console.log("About to error out", err);
+        res
+          .status(500)
+          .json({ error: err.message });
+      });
+  });
+
+  router.post("/:id/dates/:dateid", (req, res) => {
+    const userId = getLoggedUserId(req);
+    const eventId = req.params.id
+    if (doesUserOwnsEvent(db, eventId, userId)) {
+      confirmDateByEventId(db, eventId, req.params.dateid)
+        .then(() => {
+          console.log("success");
+          res.send("Success");
+        })
+        .catch(err => {
+          console.log("About to error out", err);
           res
             .status(500)
             .json({ error: err.message });
