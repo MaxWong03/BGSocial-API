@@ -16,6 +16,10 @@ const usersRouter = require("./routes/users.js");
 const eventsRouter = require("./routes/events");
 const playsRouter = require("./routes/plays");
 
+const { getUserByFBId } = require('./db/selectors/users');
+const { createAuthorizationToken } = require('./utils');
+
+
 // function read(file) {
 //   return new Promise((resolve, reject) => {
 //     fs.readFile(
@@ -44,6 +48,19 @@ module.exports = function application(
   app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api/events", eventsRouter(db));
+
+  app.use("/api/facebook-login/:fbID", (req, res) => {
+    getUserByFBId(db, req.params.fbID)
+      .then(user => {
+        if (user) {
+          const token = createAuthorizationToken(user.id);
+          res.header("x-auth-token", token).json(user);
+        }
+        else {
+          res.status(403).json({});
+        }
+      });
+  });
 
 
   // Maybe we will use it later for test 
