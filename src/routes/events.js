@@ -12,9 +12,10 @@ const {
   getGamesByEventId,
   getAllEventsByAttendantId,
   getGamesByEvent,
-  getVotesByDateId
+  getVotesByDateId,
+  deleteEventByEventId
 
-} = require('../db/events.js');
+} = require('../db/selectors/events.js');
 
 const { getGamesByIds } = require('../db/selectors/games.js');
 
@@ -61,7 +62,7 @@ module.exports = db => {
         eventGame.game = games.find(game => game.id === eventGame.game_id);
       });
 
-      const response = { ...event, eventDates, eventAttendants, eventGames };
+      const response = { ...event, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames };
       res.json(response);
     } catch (error) {
       res
@@ -99,7 +100,7 @@ module.exports = db => {
         Promise.all(req.body.eventAttendants.map(eventAttendant => addEventAttendant(db, { ...eventAttendant, event_id: event.id }))),
         Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
       ]);
-      res.json({ ...event, eventDates, eventAttendants, eventGames });
+      res.json({ ...event, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames });
     }
     catch (error) {
       res
@@ -143,6 +144,21 @@ module.exports = db => {
             .json({ error: err.message });
         });
     }
+  });
+
+  router.post("/:id/delete", (req, res) => {
+    const userId = getLoggedUserId(req);
+    deleteEventByEventId(db, req.params.id, userId)
+      .then(() => {
+        console.log("success");
+        res.send("Success");
+      })
+      .catch(err => {
+        console.log("About to error out", err);
+        res
+          .status(500)
+          .json({ error: err.message });
+      });
   });
 
   return router;

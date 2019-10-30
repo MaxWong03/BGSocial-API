@@ -109,7 +109,14 @@ const getGamesByEventId = function (db, eventId) {
     .then(res => res.rows);
 };
 
+const deleteEventByEventId = function (db, eventId, userId) {
+  return db.query(`DELETE FROM events 
+  WHERE events.id = $1 AND events.owner_id = $2`, [eventId, userId]);
+};
 
+// const deleteUserPlay = function (db, id, userId) {
+//   return db.query(`DELETE FROM plays_users WHERE plays_users.play_id = $1 AND plays_users.user_id = $2`, [id, userId]);
+// };
 
 // const addPlay = function (db, play) {
 //   const validColumns = playsColumnsNames.filter(column => column in play);
@@ -220,6 +227,7 @@ module.exports = {
   getAllEventsByAttendantId,
   getGamesByEvent,
   getAttendantsByEventId,
-  getVotesByDateId
+  getVotesByDateId,
+  deleteEventByEventId
 };
 
