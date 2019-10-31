@@ -15,7 +15,6 @@ const gamesRouter = require("./routes/games.js");
 const usersRouter = require("./routes/users.js");
 const eventsRouter = require("./routes/events");
 const playsRouter = require("./routes/plays");
-
 // function read(file) {
 //   return new Promise((resolve, reject) => {
 //     fs.readFile(
@@ -44,7 +43,7 @@ module.exports = function application(
   app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api/events", eventsRouter(db));
-
+  app.use("/api/games", gamesRouter(db));
 
   // Maybe we will use it later for test 
   // if (ENV === "development" || ENV === "test") {
