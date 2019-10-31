@@ -145,7 +145,6 @@ const deleteVoteByDateId = function (db, eventDateId, attendantId) {
 
 
 const addVoteForEventId = function (db, eventDateId, attendantId) {
-  console.log(attendantId)
   return db.query(`INSERT INTO event_dates_votes (event_date_id, attendance_id)
   VALUES ($1, $2) RETURNING *;`, [ eventDateId,  attendantId])
     .then(function (res) {
