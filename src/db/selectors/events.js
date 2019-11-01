@@ -105,9 +105,12 @@ const getVotesByDateId = function (db, eventDateId) {
 };
 
 const getVotesByEventId = function (db, eventId) {
-  return db.query(`SELECT event_dates_votes.*, event_dates.* FROM event_dates_votes 
+  return db.query(`SELECT event_dates.event_id, event_dates_votes.id AS event_date_id, event_dates_votes.event_date_id,
+  event_dates.location, event_dates.date, event_dates.id AS event_date_id, attendances.attendant_id AS user_id
+  FROM event_dates_votes 
   JOIN event_dates ON event_dates.id = event_dates_votes.event_date_id
-  WHERE event_id = $1`, [eventId])
+  JOIN attendances ON event_dates_votes.attendance_id = attendances.id
+  WHERE event_dates.event_id = $1`, [eventId])
     .then(res => res.rows)
     .catch(err => console.log(err));
 };
@@ -127,6 +130,38 @@ const confirmDateByEventId = function (db, eventId, dateId) {
   SET is_chosen = TRUE
   WHERE event_id = $1 AND id = $2`, [eventId, dateId]);
 };
+
+
+const confirmAssitanceByEventId = function (db, eventId, userId) {
+  return db.query(`UPDATE attendances 
+  SET is_confirmed = TRUE
+  WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId]);
+};
+
+const deleteVoteByDateId = function (db, eventDateId, attendantId) {
+  return db.query(`DELETE FROM event_dates_votes
+  WHERE event_dates_votes.event_date_id = $1 AND event_dates_votes.attendance_id = $2`, [eventDateId, attendantId]);
+};
+
+
+const addVoteForEventId = function (db, eventDateId, attendantId) {
+  return db.query(`INSERT INTO event_dates_votes (event_date_id, attendance_id)
+  VALUES ($1, $2) RETURNING *;`, [ eventDateId,  attendantId])
+    .then(function (res) {
+      return res.rows[0];
+    });
+};
+
+const getAttendantIdByUserId = function (db, userId, eventId) {
+  return db.query(`SELECT id FROM attendances 
+  WHERE attendant_id = $1 and event_id= $2`, [userId, eventId])
+    .then(res => {
+      return res.rows[0].id;
+    }
+     );
+};
+
+
 
 // const updateUserPlay = function (db, userPlay) {
 //   const validColumns = playsUsersColumnsNames.filter(column => column in userPlay);
@@ -263,6 +298,11 @@ module.exports = {
   deleteEventByEventId,
   getVotesByEventId,
   confirmDateByEventId,
-  doesUserOwnsEvent
+  doesUserOwnsEvent,
+  confirmAssitanceByEventId,
+  deleteVoteByDateId,
+  addVoteForEventId,
+  getAttendantIdByUserId
+
 };
 
