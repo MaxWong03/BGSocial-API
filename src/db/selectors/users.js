@@ -22,6 +22,14 @@ const getUserByFBId = (db, fbId) => {
     .catch(error => console.log('getUserByFBId Error:', error));
 };
 
+const getUserId = (db, userId) => {
+  return db.query(`
+    SELECT * FROM users WHERE id = $1
+  `, [userId])
+    .then(res => res.rows[0])
+    .catch(error => console.log('getUserId Error:', error));
+};
+
 
 const getFriendsIdByUserId = (db, userId) => {
   return db.query(`
@@ -46,5 +54,6 @@ module.exports = {
   getAllUsers,
   getUserByFBId,
   createUser,
-  getFriendsIdByUserId
+  getFriendsIdByUserId,
+  getUserId
 }

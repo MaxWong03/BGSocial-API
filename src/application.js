@@ -16,7 +16,7 @@ const usersRouter = require("./routes/users.js");
 const eventsRouter = require("./routes/events");
 const playsRouter = require("./routes/plays");
 
-const { getUserByFBId } = require('./db/selectors/users');
+const { getUserByFBId, getUserId } = require('./db/selectors/users');
 const { createAuthorizationToken } = require('./utils');
 
 
@@ -51,6 +51,19 @@ module.exports = function application(
 
   app.use("/api/facebook-login/:fbID", (req, res) => {
     getUserByFBId(db, req.params.fbID)
+      .then(user => {
+        if (user) {
+          const token = createAuthorizationToken(user.id);
+          res.header("x-auth-token", token).json(user);
+        }
+        else {
+          res.status(403).json({});
+        }
+      });
+  });
+
+  app.use("/api/fake-login/:userId", (req, res) => {
+    getUserId(db, req.params.userId)
       .then(user => {
         if (user) {
           const token = createAuthorizationToken(user.id);
