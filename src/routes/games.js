@@ -47,7 +47,9 @@ module.exports = db => {
     const gameID = req.params.gameID;
     addUserGame(db, gameID, userID)
       .then(data => {
-        res.json( { message: `successfully added a new game ${gameID} for user with ID ${userID}`} );
+        getOneGameByUserID(db,userID, gameID).then((game)=> {
+          res.json( { message: `successfully added a new game ${gameID} for user with ID ${userID}`, game});
+        }) 
     })
   });
 
@@ -101,6 +103,10 @@ module.exports = db => {
     winPercentageOfAGameForAPlayer(db, userID, gameID)
       .then(data => {
         res.json( {winPercentage: data} );
+      }).catch( err => {
+        // if (err.code === 22012)
+          res.json( {winPercentage: {percent_total: null}} )
+        // else throw err;
       })
   });
 
