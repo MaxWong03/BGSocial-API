@@ -48,6 +48,7 @@ module.exports = function application(
   app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api/events", eventsRouter(db));
+  app.use("/api/games", gamesRouter(db));
 
   app.use("/api/facebook-login/:fbID", (req, res) => {
     getUserByFBId(db, req.params.fbID)

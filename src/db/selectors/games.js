@@ -22,7 +22,7 @@ const getOnePublicGameByGameID = function (db, gameID) {
 
 // get a list of games owned by one user based on the User id
 const getAllGamesByUserID = function (db, userID) {
-  return db.query(`SELECT games.* FROM games JOIN user_games on games.id = user_games.game_id WHERE user_games.user_id = $1`, [userID])
+  return db.query(`SELECT games.*, ( SELECT plays.date ::timestamp FROM plays JOIN plays_users ON plays.id = plays_users.play_id WHERE plays_users.user_id = $1 AND plays.game_id = games.id ORDER BY date DESC LIMIT 1)  as last_play FROM games JOIN user_games on games.id = user_games.game_id WHERE user_games.user_id = $1`, [userID])
     .then(res => res.rows);
 };
 
@@ -44,8 +44,8 @@ const getAllGameIDsByCategorySearchingPattern = function (db, categorySearchingP
 
 // get a game owned by one user based on the User id and game ID
 const getOneGameByUserID = function (db, userID, gameID) {
-  return db.query(`SELECT games.* FROM games JOIN user_games on games.id = user_games.game_id WHERE user_games.user_id = $1 AND user_games.game_id = $2`, [userID, gameID])
-    .then(res => res.rows);
+  return db.query(`SELECT games.*, ( SELECT plays.date ::timestamp FROM plays JOIN plays_users ON plays.id = plays_users.play_id WHERE plays_users.user_id = $1 AND plays.game_id = games.id ORDER BY date DESC LIMIT 1) as last_play FROM games JOIN user_games on games.id = user_games.game_id WHERE user_games.user_id = $1 AND user_games.game_id = $2`, [userID, gameID])
+    .then(res => res.rows[0]);
 };
 
 // get all the games for one specific even
