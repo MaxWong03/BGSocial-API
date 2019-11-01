@@ -161,6 +161,11 @@ const getAttendantIdByUserId = function (db, userId, eventId) {
      );
 };
 
+const setNotGoingToEventByEventId = function (db, eventId, userId) {
+  return db.query(`UPDATE attendances 
+  SET is_not_assisting = TRUE
+  WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId]);
+};
 
 
 // const updateUserPlay = function (db, userPlay) {
@@ -302,7 +307,8 @@ module.exports = {
   confirmAssitanceByEventId,
   deleteVoteByDateId,
   addVoteForEventId,
-  getAttendantIdByUserId
+  getAttendantIdByUserId,
+  setNotGoingToEventByEventId
 
 };
 

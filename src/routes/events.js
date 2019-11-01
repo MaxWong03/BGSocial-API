@@ -20,7 +20,8 @@ const {
   confirmAssitanceByEventId,
   addVoteForEventId,
   deleteVoteByDateId,
-  getAttendantIdByUserId
+  getAttendantIdByUserId,
+  setNotGoingToEventByEventId
 
 } = require('../db/selectors/events.js');
 
@@ -202,6 +203,22 @@ module.exports = db => {
     await deleteVoteByDateId(db, eventDateId, attendantId)
         .then(() => {
           res.send("Successful deleted vote");
+        })
+        .catch(err => {
+          console.log("About to error out", err);
+          res
+            .status(500)
+            .json({ error: err.message });
+        });
+  });
+
+  // user is not going to event 
+  router.post(`/:id/not-going`, async(req, res) => {
+    const eventId = req.params.id
+    const userId = getLoggedUserId(req);
+    setNotGoingToEventByEventId(db, eventId, userId)
+        .then(() => {
+          res.send("Successful update to not going");
         })
         .catch(err => {
           console.log("About to error out", err);
