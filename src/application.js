@@ -48,9 +48,7 @@ module.exports = function application(
   app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api/events", eventsRouter(db));
-<<<<<<< HEAD
   app.use("/api/games", gamesRouter(db));
-=======
 
   app.use("/api/facebook-login/:fbID", (req, res) => {
     getUserByFBId(db, req.params.fbID)
@@ -78,7 +76,6 @@ module.exports = function application(
       });
   });
 
->>>>>>> d2616ed2c85fe2ac7f95cfca3b9c73f475a236d5
 
   // Maybe we will use it later for test 
   // if (ENV === "development" || ENV === "test") {
