@@ -20,7 +20,10 @@ const {
   confirmAssitanceByEventId,
   addVoteForEventId,
   deleteVoteByDateId,
-  getAttendantIdByUserId
+  getAttendantIdByUserId,
+  setNotGoingToEventByEventId,
+  getIsConfirmValueOfAttendant,
+  setGoingToEventByEventId
 
 } = require('../db/selectors/events.js');
 
@@ -30,8 +33,8 @@ const { getGamesByIds } = require('../db/selectors/games.js');
 module.exports = db => {
 
   router.get("/", async (req, res) => {
-    const userId = getLoggedUserId(req);
     try {
+      const userId = getLoggedUserId(req);
       const events = await getAllEventsByAttendantId(db, userId);
       const eventsIds = events.map(event => event.id);
       const gamesByEvent = await Promise.all(eventsIds.map(eventId => getGamesByEvent(db, eventId)));
@@ -176,12 +179,13 @@ module.exports = db => {
 
   //user votes for event date
   router.post("/:id/dates/:eventDateId/vote", async (req, res) => {
-    const userId = getLoggedUserId(req);
-    const eventId = req.params.id;
-    const eventDateId = req.params.eventDateId;
-    const attendantId = await getAttendantIdByUserId(db, userId, eventId);
-    await deleteVoteByDateId(db, eventDateId, attendantId)
-    await addVoteForEventId(db, eventDateId, attendantId)
+    try {
+      const userId = getLoggedUserId(req);
+      const eventId = req.params.id;
+      const eventDateId = req.params.eventDateId;
+      const attendantId = await getAttendantIdByUserId(db, userId, eventId);
+      await deleteVoteByDateId(db, eventDateId, attendantId)
+      addVoteForEventId(db, eventDateId, attendantId)
         .then(() => {
           res.send("Successful vote");
         })
@@ -191,15 +195,22 @@ module.exports = db => {
             .status(500)
             .json({ error: err.message });
         });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: error });
+      console.log(error);
+    }
   });
 
   //user delete its vote for that event date
-  router.post("/:id/dates/:eventDateId/vote-delete", async(req, res) => {
-    const eventId = Number(req.params.id)
-    const userId = getLoggedUserId(req);
-    const eventDateId = Number(req.params.eventDateId)
-    const attendantId = await getAttendantIdByUserId(db, userId, eventId)
-    await deleteVoteByDateId(db, eventDateId, attendantId)
+  router.post("/:id/dates/:eventDateId/vote-delete", async (req, res) => {
+    try {
+      const eventId = Number(req.params.id)
+      const userId = getLoggedUserId(req);
+      const eventDateId = Number(req.params.eventDateId)
+      const attendantId = await getAttendantIdByUserId(db, userId, eventId)
+      deleteVoteByDateId(db, eventDateId, attendantId)
         .then(() => {
           res.send("Successful deleted vote");
         })
@@ -209,6 +220,53 @@ module.exports = db => {
             .status(500)
             .json({ error: err.message });
         });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: error });
+      console.log(error);
+    }
+  });
+
+  // user is not going to event (column is is_not_assisting in attendances)
+  router.post("/:id/not-going", async (req, res) => {
+    const eventId = Number(req.params.id)
+    const userId = getLoggedUserId(req);
+    setNotGoingToEventByEventId(db, eventId, userId)
+      .then(() => {
+        res.send("Successful update to not going");
+      })
+      .catch(err => {
+        console.log("About to error out", err);
+        res
+          .status(500)
+          .json({ error: err.message });
+      });
+  });
+
+  //user is going to event (column is_confirmed in attendances)
+  router.post("/:id/going", async (req, res) => {
+    try {
+      const eventId = Number(req.params.id)
+      const userId = getLoggedUserId(req);
+      const goingValueOfUser = await getIsConfirmValueOfAttendant(db, eventId, userId)
+      setGoingToEventByEventId(db, eventId, userId, !goingValueOfUser)
+        .then(() => {
+          res.send("Successful update of going value (is_confirm of attendant)");
+        })
+        .catch(err => {
+          console.log("About to error out", err);
+          res
+            .status(500)
+            .json({ error: err.message });
+        });
+
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: error });
+      console.log(error);
+    }
   });
 
   return router;
