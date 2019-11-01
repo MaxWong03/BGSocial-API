@@ -15,6 +15,11 @@ const gamesRouter = require("./routes/games.js");
 const usersRouter = require("./routes/users.js");
 const eventsRouter = require("./routes/events");
 const playsRouter = require("./routes/plays");
+
+const { getUserByFBId, getUserId } = require('./db/selectors/users');
+const { createAuthorizationToken } = require('./utils');
+
+
 // function read(file) {
 //   return new Promise((resolve, reject) => {
 //     fs.readFile(
@@ -43,7 +48,37 @@ module.exports = function application(
   app.use("/api/users", usersRouter(db));
   app.use("/api/plays", playsRouter(db));
   app.use("/api/events", eventsRouter(db));
+<<<<<<< HEAD
   app.use("/api/games", gamesRouter(db));
+=======
+
+  app.use("/api/facebook-login/:fbID", (req, res) => {
+    getUserByFBId(db, req.params.fbID)
+      .then(user => {
+        if (user) {
+          const token = createAuthorizationToken(user.id);
+          res.header("x-auth-token", token).json(user);
+        }
+        else {
+          res.status(403).json({});
+        }
+      });
+  });
+
+  app.use("/api/fake-login/:userId", (req, res) => {
+    getUserId(db, req.params.userId)
+      .then(user => {
+        if (user) {
+          const token = createAuthorizationToken(user.id);
+          res.header("x-auth-token", token).json(user);
+        }
+        else {
+          res.status(403).json({});
+        }
+      });
+  });
+
+>>>>>>> d2616ed2c85fe2ac7f95cfca3b9c73f475a236d5
 
   // Maybe we will use it later for test 
   // if (ENV === "development" || ENV === "test") {
