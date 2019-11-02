@@ -7,6 +7,9 @@ VALUES (1, TRUE, 1, 1),
 (6, false, 1, 3),
 (7, true, 2, 3),
 (8, false, 3, 3),
-(9, false, 1, 2);
+(9, true, 3, 4),
+(10, true, 2, 4),
+(11, true, 4, 4),
+(12, false, 1, 2);
 
 SELECT SETVAL('attendances_id_seq', 50);
