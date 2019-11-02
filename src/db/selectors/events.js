@@ -10,7 +10,8 @@ const eventColumnsNames = [
   'image',
   'spots',
   'owner_id',
-  'is_open'
+  'is_open',
+  'id'
 ];
 
 const eventAttendantColumnsNames = [
@@ -100,7 +101,6 @@ const createEvent = function (db, event) {
       return res.rows[0];
     }).catch(err => console.log(err));
 };
-
 
 const addEventDate = function (db, eventDate) {
   const validColumns = eventDatesColumnsNames.filter(column => column in eventDate);
@@ -240,6 +240,37 @@ const setGoingToEventByEventId = function (db, eventId, userId, goingValueOfUser
   WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId, goingValueOfUser]);
 };
 
+const updateEvent = function (db, event) {
+  const validColumns = eventColumnsNames.filter(column => column in event);
+  const values = validColumns.map(column => event[column]);
+
+  const sets = values.map((value, index) => `${validColumns[index]} = $${index + 1}`)
+
+  values.push(event.id);
+
+  let query = `UPDATE events
+    SET ${sets.join(', ')}
+    WHERE events.id = $${values.length}
+    RETURNING *;`
+
+  return db.query(query, values)
+    .then(res => res.rows[0]);
+};
+
+const deleteEventDatesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM event_dates
+  WHERE event_dates.event_id = $1`, [eventID]);
+};
+
+const deleteAttendancesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM attendances
+  WHERE attendances.event_id = $1`, [eventID]);
+};
+
+const deleteEventGamesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM event_games
+  WHERE event_games.event_id = $1`, [eventID]);
+};
 
 module.exports = {
   createEvent,
@@ -266,6 +297,10 @@ module.exports = {
   setNotGoingToEventByEventId,
   setGoingToEventByEventId,
   getAllOpenEventsByAttendantId,
-  deleteAttendanceById
+  deleteAttendanceById,
+  deleteEventDatesByEventId,
+  deleteAttendancesByEventId,
+  deleteEventGamesByEventId,
+  updateEvent
 };
 

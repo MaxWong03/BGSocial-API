@@ -24,7 +24,11 @@ const {
   setNotGoingToEventByEventId,
   setGoingToEventByEventId,
   deleteAttendanceById,
-  getAllOpenEventsByAttendantId
+  getAllOpenEventsByAttendantId,
+  deleteEventDatesByEventId,
+  deleteAttendancesByEventId,
+  deleteEventGamesByEventId,
+  updateEvent
 
 } = require('../db/selectors/events.js');
 
@@ -57,7 +61,7 @@ module.exports = db => {
     }
   });
 
-  // get open event for user 
+  // get open events for user 
 
   router.get("/open-events", async (req, res) => {
     try {
@@ -129,6 +133,34 @@ module.exports = db => {
         Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
       ]);
       res.json({ ...event, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames });
+    }
+    catch (error) {
+      res
+        .status(500)
+        .json({ error: error });
+      console.log(error);
+    }
+  });
+
+  // edit event
+  router.post("/:id", async (req, res) => {
+    const userId = getLoggedUserId(req);
+    const eventId = req.body.eventId;
+    try {
+      const event = await getEventById(db, req.params.id);
+      if (userId === req.body.owner_id && event) {
+        await Promise.all([deleteEventDatesByEventId(db, eventId), deleteAttendancesByEventId(db, eventId),
+        deleteEventGamesByEventId(db, eventId)]);
+
+        const updatedEvent = await updateEvent(db, { ...req.body, id: event.id });
+
+        const [eventDates, eventAttendants, eventGames] = await Promise.all([
+          Promise.all(req.body.eventDates.map(eventDate => addEventDate(db, { ...eventDate, event_id: event.id }))),
+          Promise.all(req.body.eventAttendants.map(eventAttendant => addEventAttendant(db, { ...eventAttendant, event_id: event.id }))),
+          Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
+        ]);
+        res.json({...updatedEvent, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames });
+      }
     }
     catch (error) {
       res
@@ -292,7 +324,7 @@ module.exports = db => {
         res.send("Successfuly added not invited user (explore)");
       }
       else {
-        if ( attendance.is_invited) {
+        if (attendance.is_invited) {
           await setGoingToEventByEventId(db, eventId, userId, !attendance.is_confirmed);
           res.send("Successful update of going value (is_confirm of attendant)");
         }
