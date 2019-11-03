@@ -67,7 +67,6 @@ const getAllOpenEventsByAttendantId = async function (db, userID, userFriendsId)
   AND events.owner_id = ANY($2::int[])
   AND events.owner_id != $1`, [userID, userFriendsId, userEventIds])
     .then(res => {
-      console.log('this is what i got', res.rows)
       return res.rows.map(row => {
         const newRow = { ...row };
         newRow.chosen_event_date = {
