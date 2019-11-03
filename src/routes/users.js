@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, getUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -57,7 +57,11 @@ module.exports = db => {
     const userIdTwo = req.params.user;
     addFriendRequest(db, userIdOne, userIdTwo)
       .then(friends => {
-        res.json( { friend: `you sent a request to user ${userIdTwo}` } );
+        // return the user object to make the "Set state part easier"
+        getUserId(db, userIdTwo)
+        .then(user => {
+          res.json( {user: user} )
+        })
       });
   });
 
