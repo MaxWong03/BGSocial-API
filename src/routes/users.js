@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -52,7 +52,7 @@ module.exports = db => {
   // sending the 'add friend' request to another user
   // user ID 1 will be the sender
   // user ID 2: receiver who can decide to accept the request or not
-  router.post("/add-friend/:user", (req, res) => {
+  router.post("/request/:user", (req, res) => {
     const userIdOne = getLoggedUserId(req);
     const userIdTwo = req.params.user;
     addFriendRequest(db, userIdOne, userIdTwo)
@@ -63,7 +63,7 @@ module.exports = db => {
 
   // Get all the pending request send by this user
   // ok
-  router.get("/pending-request/sent", (req, res) => {
+  router.get("/request/sent", (req, res) => {
     const userID = getLoggedUserId(req);
     getFriendRequestForSender(db, userID)
       .then(data => {
@@ -71,14 +71,22 @@ module.exports = db => {
     })
   });
 
-    // Get all the pending request send by this user
+  // Get all the pending request received by this user
   // ok
-  router.get("/pending-request/received", (req, res) => {
+  router.get("/request/received", (req, res) => {
     const userID = getLoggedUserId(req);
     getFriendRequestForReceiver(db, userID)
       .then(data => {
         res.json({ users: data });
     })
+  });
+
+  // Cancel a friend request
+  router.post("/request/:user/delete", (req, res) => {
+    const userIdOne = getLoggedUserId(req);
+    const userIdTwo = req.params.user;
+    cancelFriendRequest(db, userIdOne, userIdTwo)
+      .then( res.json({ message: `deleted the request to user ${userIdTwo}` }))
   });
 
   return router;
