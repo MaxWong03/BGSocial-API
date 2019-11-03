@@ -148,18 +148,30 @@ module.exports = db => {
     const eventId = req.body.eventId;
     try {
       const event = await getEventById(db, req.params.id);
-      if (userId === req.body.owner_id && event) {
-        await Promise.all([deleteEventDatesByEventId(db, eventId), deleteAttendancesByEventId(db, eventId),
-        deleteEventGamesByEventId(db, eventId)]);
+      if (event && userId === event.owner_id) {
+        const deletePromises = [];
+        if ('eventDates' in req.body) {
+          deletePromises.push(deleteEventDatesByEventId(db, eventId));
+        }
+        if ('eventAttendants' in req.body) {
+          deletePromises.push(deleteAttendancesByEventId(db, eventId));
+        }
+        if ('eventGames' in req.body) {
+          deletePromises.push(deleteEventGamesByEventId(db, eventId));
+        }
+        await Promise.all(deletePromises);
 
         const updatedEvent = await updateEvent(db, { ...req.body, id: event.id });
 
         const [eventDates, eventAttendants, eventGames] = await Promise.all([
-          Promise.all(req.body.eventDates.map(eventDate => addEventDate(db, { ...eventDate, event_id: event.id }))),
-          Promise.all(req.body.eventAttendants.map(eventAttendant => addEventAttendant(db, { ...eventAttendant, event_id: event.id }))),
-          Promise.all(req.body.eventGames.map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
+          Promise.all((req.body.eventDates || []).map(eventDate => addEventDate(db, { ...eventDate, event_id: event.id }))),
+          Promise.all((req.body.eventAttendants || []).map(eventAttendant => addEventAttendant(db, { ...eventAttendant, event_id: event.id }))),
+          Promise.all((req.body.eventGames || []).map(eventGame => addEventGame(db, { ...eventGame, event_id: event.id }))),
         ]);
         res.json({...updatedEvent, event_dates: eventDates, event_attendants: eventAttendants, event_games: eventGames });
+      }
+      else {
+        res.status(301).json({'message': 'forbidden'});
       }
     }
     catch (error) {

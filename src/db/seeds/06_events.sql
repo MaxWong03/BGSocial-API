@@ -1,6 +1,6 @@
-INSERT INTO events (id, owner_id)
-VALUES (1, 1),
-(2, 1);
+INSERT INTO events (id, owner_id, spots)
+VALUES (1, 1, 4),
+(2, 1, 5);
 
 
 INSERT INTO events (id, owner_id, spots, is_open)
