@@ -50,29 +50,27 @@ const getFriendsIdByUserId = (db, userId) => {
 };
 
 const addFriendRequest = (db, userIdOne, userIdTwo) => {
-//   return db.query(`
-//     SELECT * 
-//     FROM friends 
-//     WHERE (user1_id = $1 OR user2_id = $2) AND is_accepted = TRUE
-// `, [userId, userId])
-//   .then(res => {
-//     const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
-//     return db.query(`
-//     SELECT * 
-//     FROM users 
-//     WHERE users.id = ANY($1::int[])
-// `, [friendsIds])
-//   })
-//   .then(res => res.rows)
-//   .catch(error => console.log('getUse
-// rByFBId Error:', error));
-//   return db.query(`
-
   return db.query(`
     insert into friends (user1_id, user2_id) values ($1, $2);
   `, [userIdOne, userIdTwo])
   .then( res => res.rows)
   .catch(error => console.log('addFriendRequest Error:', error));
+};
+
+const getFriendRequestForSender = (db, userIdOne) => {
+  return db.query(`
+  SELECT users.* FROM users JOIN friends ON friends.user2_id = users.id WHERE is_accepted = FALSE AND user1_id = $1;
+  `, [userIdOne])
+  .then( res => res.rows)
+  .catch(error => console.log('getFriendRequestForSender Error:', error));
+};
+
+const getFriendRequestForReceiver = (db, userID) => {
+  return db.query(`
+  SELECT users.* FROM users JOIN friends ON friends.user1_id = users.id WHERE is_accepted = FALSE AND user2_id = $1;
+  `, [userID])
+  .then(res => res.rows)
+  .catch(error => console.log('getFriendRequestForReceiver Error:', error));
 };
 
 module.exports = {
@@ -81,5 +79,7 @@ module.exports = {
   createUser,
   getFriendsIdByUserId,
   getUserId,
-  addFriendRequest
+  addFriendRequest,
+  getFriendRequestForSender,
+  getFriendRequestForReceiver
 }

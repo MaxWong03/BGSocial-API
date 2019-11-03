@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -57,8 +57,28 @@ module.exports = db => {
     const userIdTwo = req.params.user;
     addFriendRequest(db, userIdOne, userIdTwo)
       .then(friends => {
-        res.json( { "friends": "asdfsafs" } );
+        res.json( { friend: `you sent a request to user ${userIdTwo}` } );
       });
+  });
+
+  // Get all the pending request send by this user
+  // ok
+  router.get("/pending-request/sent", (req, res) => {
+    const userID = getLoggedUserId(req);
+    getFriendRequestForSender(db, userID)
+      .then(data => {
+        res.json({ users: data });
+    })
+  });
+
+    // Get all the pending request send by this user
+  // ok
+  router.get("/pending-request/received", (req, res) => {
+    const userID = getLoggedUserId(req);
+    getFriendRequestForReceiver(db, userID)
+      .then(data => {
+        res.json({ users: data });
+    })
   });
 
   return router;
