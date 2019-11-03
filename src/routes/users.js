@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, addFriendRequest } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -46,6 +46,18 @@ module.exports = db => {
     getFriendsIdByUserId(db, Number(req.params.id))
       .then(friends => {
         res.json(friends);
+      });
+  });
+
+  // sending the 'add friend' request to another user
+  // user ID 1 will be the sender
+  // user ID 2: receiver who can decide to accept the request or not
+  router.post("/add-friend/:user", (req, res) => {
+    const userIdOne = getLoggedUserId(req);
+    const userIdTwo = req.params.user;
+    addFriendRequest(db, userIdOne, userIdTwo)
+      .then(friends => {
+        res.json( { "friends": "asdfsafs" } );
       });
   });
 
