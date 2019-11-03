@@ -13,4 +13,12 @@ function createAuthorizationToken(userId) {
   return token;
 }
 
-module.exports = { getLoggedUserId, createAuthorizationToken }
+const arrayToObject = function (objectsArray, key) { // key === 'id'
+  const object = {};
+  objectsArray.forEach(item => {
+    object[item[key]] = item;
+  });
+  return object;
+}
+
+module.exports = { getLoggedUserId, createAuthorizationToken, arrayToObject }

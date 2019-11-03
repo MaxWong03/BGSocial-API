@@ -1,9 +1,25 @@
 const eventDatesColumnsNames = [
   'is_chosen',
-  'is_open',
   'date',
   'location',
   'event_id'
+];
+
+const eventColumnsNames = [
+  'title',
+  'image',
+  'spots',
+  'owner_id',
+  'is_open',
+  'id'
+];
+
+const eventAttendantColumnsNames = [
+  'is_invited',
+  'event_id',
+  'attendant_id',
+  'is_confirmed',
+  'is_not_assisting'
 ];
 
 const getAllEventsByAttendantId = function (db, userID) {
@@ -28,6 +44,42 @@ const getAllEventsByAttendantId = function (db, userID) {
     });
 };
 
+const getAllEventsIdsByAttendantId = function (db, userID) {
+  return db.query(`SELECT events.id 
+  FROM attendances
+  JOIN events ON attendances.event_id = events.id
+  WHERE attendances.attendant_id = $1`, [userID])
+    .then(res => {
+      return res.rows.map(event => event.id);
+    });
+};
+
+const getAllOpenEventsByAttendantId = async function (db, userID, userFriendsId) {
+  const userEventIds = await getAllEventsIdsByAttendantId(db, userID);
+
+  return db.query(`SELECT events.*, event_dates.location as "event_dates.location", 
+  event_dates.date as "event_dates.date" FROM events 
+  JOIN event_dates ON events.id = event_dates.event_id 
+  JOIN (SELECT event_id, count(*) as used_spots FROM attendances where attendances.is_confirmed = TRUE GROUP BY event_id) as confirmed_counts ON confirmed_counts.event_id = events.id
+  WHERE events.is_open = TRUE AND events.spots > confirmed_counts.used_spots
+  AND event_dates.is_chosen = TRUE 
+  AND events.id != ALL ($3::int[])
+  AND events.owner_id = ANY($2::int[])
+  AND events.owner_id != $1`, [userID, userFriendsId, userEventIds])
+    .then(res => {
+      return res.rows.map(row => {
+        const newRow = { ...row };
+        newRow.chosen_event_date = {
+          'date': row['event_dates.date'],
+          'location': row['event_dates.location'],
+        };
+        delete newRow['event_dates.date'];
+        delete newRow['event_dates.location'];
+        return newRow;
+      });
+    });
+};
+
 const getGamesByEvent = function (db, eventID) {
   return db.query(`SELECT  games.* FROM event_games JOIN games ON games.id = event_games.game_id 
   WHERE event_games.event_id = $1`, [eventID])
@@ -37,12 +89,16 @@ const getGamesByEvent = function (db, eventID) {
 };
 
 
-const createEvent = function (db, userID) {
-  return db.query(`INSERT INTO events (owner_id)
-    VALUES ($1) RETURNING *;`, [userID])
-    .then(function (res) {
+const createEvent = function (db, event) {
+  const validColumns = eventColumnsNames.filter(column => column in event);
+  const indexArray = validColumns.map((column, index) => `$${index + 1}`);
+  const values = validColumns.map(column => event[column]);
+
+  return db.query(`INSERT INTO events (${validColumns.join(', ')})
+    VALUES (${indexArray.join(', ')}) RETURNING *;`, values)
+    .then((res) => {
       return res.rows[0];
-    });
+    }).catch(err => console.log(err));
 };
 
 const addEventDate = function (db, eventDate) {
@@ -73,11 +129,15 @@ const addEventGame = function (db, eventGame) {
 };
 
 const addEventAttendant = function (db, attendant) {
-  return db.query(`INSERT INTO attendances (attendant_id, event_id)
-  VALUES ($1, $2) RETURNING *;`, [attendant.attendant_id, attendant.event_id])
-    .then(function (res) {
+  const validColumns = eventAttendantColumnsNames.filter(column => column in attendant);
+  const indexArray = validColumns.map((column, index) => `$${index + 1}`);
+  const values = validColumns.map(column => attendant[column]);
+
+  return db.query(`INSERT INTO attendances (${validColumns.join(', ')})
+    VALUES (${indexArray.join(', ')}) RETURNING *;`, values)
+    .then((res) => {
       return res.rows[0];
-    });
+    }).catch(err => console.log(err));
 };
 
 const getEventById = function (db, eventId) {
@@ -143,22 +203,27 @@ const deleteVoteByDateId = function (db, eventDateId, attendantId) {
   WHERE event_dates_votes.event_date_id = $1 AND event_dates_votes.attendance_id = $2`, [eventDateId, attendantId]);
 };
 
+const deleteAttendanceById = function (db, attendanceId) {
+  return db.query(`DELETE FROM attendances
+  WHERE id = $1`, [attendanceId]);
+};
 
 const addVoteForEventId = function (db, eventDateId, attendantId) {
   return db.query(`INSERT INTO event_dates_votes (event_date_id, attendance_id)
-  VALUES ($1, $2) RETURNING *;`, [ eventDateId,  attendantId])
+  VALUES ($1, $2) RETURNING *;`, [eventDateId, attendantId])
     .then(function (res) {
       return res.rows[0];
     });
 };
 
-const getAttendantIdByUserId = function (db, userId, eventId) {
-  return db.query(`SELECT id FROM attendances 
-  WHERE attendant_id = $1 and event_id= $2`, [userId, eventId])
+const getAttendanceByUserId = function (db, eventId, userId) {
+  return db.query(`
+    SELECT attendances.*
+    FROM attendances 
+    WHERE attendant_id = $1 AND event_id = $2`, [userId, eventId])
     .then(res => {
-      return res.rows[0].id;
-    }
-     );
+      return res.rows[0];
+    });
 };
 
 const setNotGoingToEventByEventId = function (db, eventId, userId) {
@@ -167,14 +232,6 @@ const setNotGoingToEventByEventId = function (db, eventId, userId) {
   WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId]);
 };
 
-const getIsConfirmValueOfAttendant = function (db, eventId, userId) {
-  return db.query(`SELECT is_confirmed FROM attendances 
-  WHERE attendant_id = $1 and event_id= $2`, [userId, eventId])
-    .then(res => {
-      return res.rows[0].is_confirmed;
-    }
-     );
-};
 
 const setGoingToEventByEventId = function (db, eventId, userId, goingValueOfUser) {
   return db.query(`UPDATE attendances 
@@ -182,6 +239,37 @@ const setGoingToEventByEventId = function (db, eventId, userId, goingValueOfUser
   WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId, goingValueOfUser]);
 };
 
+const updateEvent = function (db, event) {
+  const validColumns = eventColumnsNames.filter(column => column in event);
+  const values = validColumns.map(column => event[column]);
+
+  const sets = values.map((value, index) => `${validColumns[index]} = $${index + 1}`)
+
+  values.push(event.id);
+
+  let query = `UPDATE events
+    SET ${sets.join(', ')}
+    WHERE events.id = $${values.length}
+    RETURNING *;`
+
+  return db.query(query, values)
+    .then(res => res.rows[0]);
+};
+
+const deleteEventDatesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM event_dates
+  WHERE event_dates.event_id = $1`, [eventID]);
+};
+
+const deleteAttendancesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM attendances
+  WHERE attendances.event_id = $1`, [eventID]);
+};
+
+const deleteEventGamesByEventId = function (db, eventID) {
+  return db.query(`DELETE FROM event_games
+  WHERE event_games.event_id = $1`, [eventID]);
+};
 
 module.exports = {
   createEvent,
@@ -204,10 +292,14 @@ module.exports = {
   confirmAssitanceByEventId,
   deleteVoteByDateId,
   addVoteForEventId,
-  getAttendantIdByUserId,
+  getAttendanceByUserId,
   setNotGoingToEventByEventId,
-  getIsConfirmValueOfAttendant,
-  setGoingToEventByEventId
-
+  setGoingToEventByEventId,
+  getAllOpenEventsByAttendantId,
+  deleteAttendanceById,
+  deleteEventDatesByEventId,
+  deleteAttendancesByEventId,
+  deleteEventGamesByEventId,
+  updateEvent
 };
 

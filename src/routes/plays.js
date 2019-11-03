@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getLoggedUserId } = require('../utils');
+const { getLoggedUserId, arrayToObject } = require('../utils');
 const {
   isUserInPlay,
   getPlaysByUserId,
@@ -12,6 +12,10 @@ const {
   updatePlay,
   deletePlay
 } = require('../db/selectors/plays');
+
+const { getUsersByIds } = require('../db/selectors/users');
+
+const { getGamesByIds } = require('../db/selectors/games');
 
 // Avoiding too many requests, we are returning all related data
 // /plays
@@ -45,16 +49,19 @@ module.exports = db => {
           getPlaysUserByPlayIds(db, playsIds),
           getGamesByIds(db, gameIds)
         ]).then(([playsUsers, games]) => {
-          const gamesById = games.reduce((accum, item) => {
-            accum[item.id] = item;
-            return accum;
-          }, {});
+          const gamesById = arrayToObject(games, 'id');
 
           plays.forEach(play => {
             play.playsUsers = playsUsers.filter(playUser => playUser.play_id == play.id);
           });
 
-          res.json({ plays: plays, games: gamesById });
+          let userIds = playsUsers.map(play => play.user_id);
+          userIds = [...new Set(userIds)]; // Make ids unique
+          getUsersByIds(db, userIds).then(users => {
+            const usersById = arrayToObject(users, 'id');
+            res.json({ plays: plays, games: gamesById, users: usersById });
+          });
+
         }).catch(e => console.log(e));
 
       });
