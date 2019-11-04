@@ -66,8 +66,8 @@ module.exports = db => {
   router.get("/open-events", async (req, res) => {
     try {
       const userId = getLoggedUserId(req);
-      const userFriends = await getFriendsIdByUserId(db, userId)
-      userFriendsId = userFriends.map(friends => friends.id)
+      const userFriends = await getFriendsIdByUserId(db, userId);
+      const userFriendsId = userFriends.map(friends => friends.id);
       const events = await getAllOpenEventsByAttendantId(db, userId, userFriendsId);
       const eventsIds = events.map(event => event.id);
       const gamesByEvent = await Promise.all(eventsIds.map(eventId => getGamesByEvent(db, eventId)));
@@ -236,9 +236,9 @@ module.exports = db => {
   // owner choose date for event
   router.post("/:id/dates/:dateid", (req, res) => {
     const userId = getLoggedUserId(req);
-    const eventId = req.params.id
+    const eventId = req.params.id;
     if (doesUserOwnsEvent(db, eventId, userId)) {
-      confirmAssitanceByEventId(db, eventId, userId)
+      confirmAssitanceByEventId(db, eventId, userId);
       confirmDateByEventId(db, eventId, req.params.dateid)
         .then(() => {
           console.log("success");
@@ -259,8 +259,9 @@ module.exports = db => {
       const userId = getLoggedUserId(req);
       const eventId = req.params.id;
       const eventDateId = req.params.eventDateId;
-      const attendantId = await getAttendantIdByUserId(db, userId, eventId);
-      await deleteVoteByDateId(db, eventDateId, attendantId)
+      const attendance =  await getAttendanceByUserId(db, eventId, userId);
+      const attendantId = attendance.id;
+      await deleteVoteByDateId(db, eventDateId, attendantId);
       addVoteForEventId(db, eventDateId, attendantId)
         .then(() => {
           res.send("Successful vote");
@@ -282,10 +283,11 @@ module.exports = db => {
   //user delete its vote for that event date
   router.post("/:id/dates/:eventDateId/vote-delete", async (req, res) => {
     try {
-      const eventId = Number(req.params.id)
+      const eventId = Number(req.params.id);
       const userId = getLoggedUserId(req);
-      const eventDateId = Number(req.params.eventDateId)
-      const attendantId = await getAttendantIdByUserId(db, userId, eventId)
+      const eventDateId = Number(req.params.eventDateId);
+      const attendance =  await getAttendanceByUserId(db, eventId, userId);
+      const attendantId = attendance.id;
       deleteVoteByDateId(db, eventDateId, attendantId)
         .then(() => {
           res.send("Successful deleted vote");
