@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, getUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, getUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest, confirmFriendRequest } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -90,7 +90,42 @@ module.exports = db => {
     const userIdOne = getLoggedUserId(req);
     const userIdTwo = req.params.user;
     cancelFriendRequest(db, userIdOne, userIdTwo)
-      .then( res.json({ message: `deleted the request to user ${userIdTwo}` }))
+      .then( 
+        getUserId(db, userIdTwo)
+        .then(user => {
+          res.json( {user: user} )
+        })
+      )
+  });
+
+  // Accept a friend request
+  // unable to make a put
+  router.post("/request/:user/confirm", (req, res) => {
+    const userIdOne = getLoggedUserId(req);
+    const userIdTwo = req.params.user;
+    cancelFriendRequest(db, userIdOne, userIdTwo)
+      .then( 
+        confirmFriendRequest(db, userIdOne, userIdTwo)
+        .then(
+          getUserId(db, userIdTwo)
+          .then(user => {
+            res.json( {user: user} )
+          })
+        )
+      )
+  });
+
+  // reject a friend request
+  router.post("/request/:user/reject", (req, res) => {
+    const userIdOne = getLoggedUserId(req);
+    const userIdTwo = req.params.user;
+    cancelFriendRequest(db, userIdTwo, userIdOne)
+      .then( 
+        getUserId(db, userIdTwo)
+        .then(user => {
+          res.json( {user: user} )
+        })
+      )
   });
 
   return router;

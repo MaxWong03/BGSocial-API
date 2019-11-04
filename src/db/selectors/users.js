@@ -81,6 +81,14 @@ const cancelFriendRequest = (db, userOneID, userTwoID) => {
   .catch(error => console.log('cancelFriendRequest Error:', error));
 };
 
+const confirmFriendRequest = (db, userOneID, userTwoID) => {
+  return db.query(`
+    INSERT INTO friends (is_accepted, user1_id, user2_id) VALUES (true, $1, $2)
+  `, [userOneID, userTwoID])
+  .then(res => res.rows)
+  .catch(error => console.log('confirmFriendRequest Error:', error));
+};
+
 module.exports = {
   getAllUsers,
   getUserByFBId,
@@ -90,5 +98,6 @@ module.exports = {
   addFriendRequest,
   getFriendRequestForSender,
   getFriendRequestForReceiver,
-  cancelFriendRequest
+  cancelFriendRequest,
+  confirmFriendRequest
 }
