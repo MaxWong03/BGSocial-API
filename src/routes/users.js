@@ -52,9 +52,9 @@ module.exports = db => {
   // sending the 'add friend' request to another user
   // user ID 1 will be the sender
   // user ID 2: receiver who can decide to accept the request or not
-  router.post("/request/:user", (req, res) => {
+  router.post("/request/:friendRequestId", (req, res) => {
     const userIdOne = getLoggedUserId(req);
-    const userIdTwo = req.params.user;
+    const userIdTwo = req.params.friendRequestId;
     addFriendRequest(db, userIdOne, userIdTwo)
       .then(friends => {
         // return the user object to make the "Set state part easier"
@@ -91,21 +91,18 @@ module.exports = db => {
     const userIdTwo = req.params.user;
     cancelFriendRequest(db, userIdOne, userIdTwo)
       .then(
-        cancelFriendRequest(db, userIdOne, userIdTwo)
-        .then(
-          getUserId(db, userIdTwo)
-          .then(user => {
-            res.json( {user: user} )
-          })
-        )
+        getUserId(db, userIdTwo)
+        .then(user => {
+          res.json( {user: user} )
+        })
       );
   });
 
   // Accept a friend request
   // unable to make a put
-  router.post("/request/:user/confirm", (req, res) => {
+  router.post("/request/:friend/confirm", (req, res) => {
     const userIdOne = getLoggedUserId(req);
-    const userIdTwo = req.params.user;
+    const userIdTwo = req.params.friend;
     cancelFriendRequest(db, userIdTwo, userIdOne )
       .then(() => {
         confirmFriendRequest(db, userIdOne, userIdTwo)
