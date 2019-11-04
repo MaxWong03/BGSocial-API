@@ -75,7 +75,8 @@ const getFriendRequestForReceiver = (db, userID) => {
 
 const cancelFriendRequest = (db, userOneID, userTwoID) => {
   return db.query(`
-    DELETE FROM friends WHERE user1_id = $1 AND user2_id = $2;
+    DELETE FROM friends WHERE user1_id = $1 AND user2_id = $2 OR user1_id = $2 AND user2_id = $1;
+  ;
   `, [userOneID, userTwoID])
   .then(res => res.rows)
   .catch(error => console.log('cancelFriendRequest Error:', error));
