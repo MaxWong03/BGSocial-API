@@ -19,6 +19,33 @@ const getPlaysByUserId = function (db, userId) {
     .then(res => res.rows);
 };
 
+
+const getPlaysStatistics = function (db, gameId, isWinner, users) {
+  values = [gameId]
+  let winnerCheck = '';
+  if (isWinner === false) {
+    winnerCheck = 'AND plays_users.is_winner = FALSE';
+  }
+  if (isWinner === true) {
+    winnerCheck = 'AND plays_users.is_winner = TRUE';
+  }
+  let usersCondition = '';
+  if (users) {
+    usersCondition = `AND plays_users.user_id = ANY($2::int[])`;
+    values.push(users);
+  }
+  return db.query(`SELECT 
+    MAX(plays_users.score) AS max_score, 
+    MIN(plays_users.score) AS min_score,
+    count(plays.game_id) as play_counts, 
+    AVG(plays_users.score) AS avg_score,
+    AVG(plays.duration) AS avg_duration 
+    FROM plays_users JOIN plays ON plays_users.play_id = plays.id
+    WHERE plays.game_id = $1 ${winnerCheck} ${usersCondition}
+    GROUP BY plays.game_id`, values)
+    .then(res => res.rows);
+};
+
 const isUserInPlay = function (db, playId, userId) {
   return db.query(`SELECT plays_users.id
    FROM plays_users
@@ -125,7 +152,8 @@ module.exports = {
   deleteUserPlay,
   updateUserPlay,
   updatePlay,
-  deletePlay
+  deletePlay,
+  getPlaysStatistics
 };
 
 
