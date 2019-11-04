@@ -10,10 +10,11 @@ const {
   deleteUserPlay,
   updateUserPlay,
   updatePlay,
-  deletePlay
+  deletePlay,
+  getPlaysStatistics
 } = require('../db/selectors/plays');
 
-const { getUsersByIds } = require('../db/selectors/users');
+const { getUsersByIds, getFriendsIdByUserId } = require('../db/selectors/users');
 
 const { getGamesByIds } = require('../db/selectors/games');
 
@@ -27,15 +28,6 @@ const { getGamesByIds } = require('../db/selectors/games');
 // TODO: Add parameter to make it optional to return the related data
 
 // /games/4/statistics?userId
-
-const errorHandler = (res) => {
-  return err => {
-    console.log(err);
-    res
-      .status(500)
-      .json({ error: err.message });
-  }
-};
 
 module.exports = db => {
   router.get("/", (req, res) => {
@@ -65,6 +57,24 @@ module.exports = db => {
         }).catch(e => console.log(e));
 
       });
+  });
+
+  // get all plays of the user by games id getPlaysStatistics = function (db, gameId, isWinner, users)
+  router.get("/:gameId/games-statistics", async (req, res) => {
+    const userId = getLoggedUserId(req);
+    const gameId = req.params.gameId
+    const isWinner = req.query.winner ? req.query.winner : '';
+    let usersId = undefined;
+    if(req.query.friends){
+      users = await getFriendsIdByUserId(db, userId)
+      usersId = users.map(user => user.id);
+      usersId.push(userId);
+    }
+    console.log(usersId)
+    getPlaysStatistics(db, gameId, isWinner, usersId)
+      .then(plays => {
+            res.json(plays);
+          }).catch(e => console.log(e));
   });
 
   router.post("/", (req, res) => {
@@ -102,6 +112,8 @@ module.exports = db => {
           .json({ error: err.message });
       });
   });
+
+
 
   router.post("/:id/edit", (req, res) => {
     const userId = getLoggedUserId(req);
