@@ -310,6 +310,7 @@ module.exports = db => {
   router.post("/:id/not-going", async (req, res) => {
     const eventId = Number(req.params.id)
     const userId = getLoggedUserId(req);
+    console.log('enter to not going')
     setNotGoingToEventByEventId(db, eventId, userId)
       .then(() => {
         res.send("Successful update to not going");
