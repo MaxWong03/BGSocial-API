@@ -229,8 +229,11 @@ const getAttendanceByUserId = function (db, eventId, userId) {
 
 const setNotGoingToEventByEventId = function (db, eventId, userId) {
   return db.query(`UPDATE attendances 
-  SET is_not_assisting = TRUE
-  WHERE event_id = $1 AND attendant_id = $2`, [eventId, userId]);
+  SET is_not_assisting = TRUE, is_confirmed = FALSE
+  WHERE event_id = $1 AND attendant_id = $2 RETURNING *;`, [eventId, userId])
+  .then(res => {
+    console.log(res.rows[0]);
+  });
 };
 
 
