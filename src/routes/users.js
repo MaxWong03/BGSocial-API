@@ -71,7 +71,7 @@ module.exports = db => {
     const userID = getLoggedUserId(req);
     getFriendRequestForSender(db, userID)
       .then(data => {
-        res.json({ users: data });
+        res.json({ sentRequest: data });
     });
   });
 
@@ -81,7 +81,7 @@ module.exports = db => {
     const userID = getLoggedUserId(req);
     getFriendRequestForReceiver(db, userID)
       .then(data => {
-        res.json({ users: data });
+        res.json({ receivedRequest: data });
     });
   });
 
