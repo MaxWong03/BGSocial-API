@@ -14,6 +14,22 @@ VALUES (1, TRUE, 1, 1),
 (13, false, 3, 5),
 (14, false, 8, 5),
 (15, false, 9, 5),
-(16, false, 1, 2);
+
+(16, false, 1, 6),
+(17, true, 3, 6),
+(18, true, 8, 6),
+(19, true, 9, 6),
+
+(20, true, 1, 7),
+(21, true, 10, 7),
+(22, true, 11, 7),
+(23, true, 12, 7),
+
+(24, true, 1, 8),
+(25, true, 3, 8),
+(26, true, 12, 8),
+(27, true, 14, 8),
+
+(28, false, 1, 2);
 
 SELECT SETVAL('attendances_id_seq', 50);

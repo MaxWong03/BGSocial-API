@@ -27,9 +27,10 @@ const getAllEventsByAttendantId = function (db, userID) {
   chosen_event_dates.date as "event_dates.date", chosen_event_dates.location as "event_dates.location" 
   FROM attendances
   JOIN events ON attendances.event_id = events.id
-  LEFT JOIN (SELECT * FROM event_dates WHERE event_dates.is_chosen = TRUE) as chosen_event_dates on events.id = chosen_event_dates.event_id
+  LEFT JOIN (SELECT * FROM event_dates WHERE event_dates.is_chosen = TRUE 
+    AND event_dates.date >= CURRENT_TIMESTAMP) as chosen_event_dates on events.id = chosen_event_dates.event_id
   WHERE 
-  attendances.attendant_id = $1`, [userID])
+  attendances.attendant_id = $1 `, [userID])
     .then(res => {
       return res.rows.map(row => {
         const newRow = { ...row };
