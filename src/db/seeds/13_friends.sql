@@ -1,7 +1,7 @@
 INSERT INTO friends (is_accepted, user1_id, user2_id)
 VALUES
-(TRUE, 1, 2),
-(TRUE, 1, 3),
+-- (TRUE, 1, 2),
+-- (TRUE, 1, 3),
 (TRUE, 1, 4),
 (TRUE, 1, 5),
 (TRUE, 1, 6),
