@@ -1,16 +1,42 @@
-const jwt = require('jsonwebtoken');
-require('./../environment');
-
-function getLoggedUserId(req) {
-  const token = req.headers["x-auth-token"];
-  const user = jwt.verify(token, process.env.SECRET_APP_KEY);
-  // console.log('Logged user', user);
-  return user.id;
-};
-
-function createAuthorizationToken(userId) {
-  const token = jwt.sign({ id: userId }, process.env.SECRET_APP_KEY); //get the private key from the config file -> environment variable
-  return token;
+import moment from 'moment';
+const formatDateWithTime = function (date) {
+  return moment(date).format('ddd, MMM DD [at] hh:mm A');
 }
-
-module.exports = { getLoggedUserId, createAuthorizationToken }
+const formatTime = function (time) {
+  if (!time) {
+    return '';
+  }
+  const [hour, minute] = time.split(':').map(i => Number(i));
+  let timeString = '';
+  if (hour) {
+    timeString += `${hour}h`;
+  }
+  if (minute) {
+    timeString += ` ${minute}m`;
+  }
+  return timeString.trim();
+}
+const arrayToObject = function (objectsArray, key) { // key === 'id'
+  const object = {};
+  objectsArray.forEach(item => {
+    object[item[key]] = item;
+  });
+  return object;
+}
+const getEventMainImage = function (event) {
+  return event.event_games[0].game.image;
+}
+const getEventChosenEventDate = function (event) {
+  return event.event_dates.find(eventDate => eventDate.is_chosen === true);
+}
+function getConfirmedAttendants(event) {
+  return event.event_attendants.filter(attendant => attendant.is_confirmed === true && attendant.is_not_assisting === false)
+};
+export {
+  formatDateWithTime,
+  formatTime,
+  arrayToObject,
+  getEventChosenEventDate,
+  getEventMainImage,
+  getConfirmedAttendants,
+};

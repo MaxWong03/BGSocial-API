@@ -16,7 +16,7 @@ const usersRouter = require("./routes/users.js");
 const eventsRouter = require("./routes/events");
 const playsRouter = require("./routes/plays");
 
-const { getUserByFBId, getUserId } = require('./db/selectors/users');
+const { getUserByFBId, getUserById } = require('./db/selectors/users');
 const { createAuthorizationToken } = require('./utils');
 
 
@@ -63,7 +63,7 @@ module.exports = function application(
   });
 
   app.use("/api/fake-login/:userId", (req, res) => {
-    getUserId(db, req.params.userId)
+    getUserById(db, req.params.userId)
       .then(user => {
         if (user) {
           const token = createAuthorizationToken(user.id);

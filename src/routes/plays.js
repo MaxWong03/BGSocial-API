@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getLoggedUserId } = require('../utils');
+const { getLoggedUserId, arrayToObject } = require('../utils');
 const {
   isUserInPlay,
   getPlaysByUserId,
@@ -10,8 +10,13 @@ const {
   deleteUserPlay,
   updateUserPlay,
   updatePlay,
-  deletePlay
+  deletePlay,
+  getPlaysStatistics
 } = require('../db/selectors/plays');
+
+const { getUsersByIds, getFriendsIdByUserId } = require('../db/selectors/users');
+
+const { getGamesByIds } = require('../db/selectors/games');
 
 // Avoiding too many requests, we are returning all related data
 // /plays
@@ -23,15 +28,6 @@ const {
 // TODO: Add parameter to make it optional to return the related data
 
 // /games/4/statistics?userId
-
-const errorHandler = (res) => {
-  return err => {
-    console.log(err);
-    res
-      .status(500)
-      .json({ error: err.message });
-  }
-};
 
 module.exports = db => {
   router.get("/", (req, res) => {
@@ -45,19 +41,40 @@ module.exports = db => {
           getPlaysUserByPlayIds(db, playsIds),
           getGamesByIds(db, gameIds)
         ]).then(([playsUsers, games]) => {
-          const gamesById = games.reduce((accum, item) => {
-            accum[item.id] = item;
-            return accum;
-          }, {});
+          const gamesById = arrayToObject(games, 'id');
 
           plays.forEach(play => {
             play.playsUsers = playsUsers.filter(playUser => playUser.play_id == play.id);
           });
 
-          res.json({ plays: plays, games: gamesById });
+          let userIds = playsUsers.map(play => play.user_id);
+          userIds = [...new Set(userIds)]; // Make ids unique
+          getUsersByIds(db, userIds).then(users => {
+            const usersById = arrayToObject(users, 'id');
+            res.json({ plays: plays, games: gamesById, users: usersById });
+          });
+
         }).catch(e => console.log(e));
 
       });
+  });
+
+  // get all plays of the user by games id getPlaysStatistics = function (db, gameId, isWinner, users)
+  router.get("/:gameId/games-statistics", async (req, res) => {
+    const userId = getLoggedUserId(req);
+    const gameId = req.params.gameId
+    const isWinner = req.query.winner ? req.query.winner : '';
+    let usersId = undefined;
+    if(req.query.friends){
+      users = await getFriendsIdByUserId(db, userId)
+      usersId = users.map(user => user.id);
+      usersId.push(userId);
+    }
+    console.log(usersId)
+    getPlaysStatistics(db, gameId, isWinner, usersId)
+      .then(plays => {
+            res.json(plays);
+          }).catch(e => console.log(e));
   });
 
   router.post("/", (req, res) => {
@@ -95,6 +112,8 @@ module.exports = db => {
           .json({ error: err.message });
       });
   });
+
+
 
   router.post("/:id/edit", (req, res) => {
     const userId = getLoggedUserId(req);

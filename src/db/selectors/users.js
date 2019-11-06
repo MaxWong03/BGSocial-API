@@ -22,7 +22,7 @@ const getUserByFBId = (db, fbId) => {
     .catch(error => console.log('getUserByFBId Error:', error));
 };
 
-const getUserId = (db, userId) => {
+const getUserById = (db, userId) => {
   return db.query(`
     SELECT * FROM users WHERE id = $1
   `, [userId])
@@ -30,6 +30,13 @@ const getUserId = (db, userId) => {
     .catch(error => console.log('getUserId Error:', error));
 };
 
+const getUsersByIds = (db, userIds) => {
+  return db.query(`
+    SELECT * FROM users WHERE users.id = ANY($1::int[])
+  `, [userIds])
+    .then(res => res.rows)
+    .catch(error => console.log('getUsersByIds Error:', error));
+};
 
 const getFriendsIdByUserId = (db, userId) => {
   return db.query(`
@@ -37,17 +44,17 @@ const getFriendsIdByUserId = (db, userId) => {
     FROM friends 
     WHERE (user1_id = $1 OR user2_id = $2) AND is_accepted = TRUE
 `, [userId, userId])
-  .then(res => {
-    const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
-    return db.query(`
+    .then(res => {
+      const friendsIds = res.rows.map(row => row.user1_id !== userId ? row.user1_id : row.user2_id);
+      return db.query(`
     SELECT * 
     FROM users 
     WHERE users.id = ANY($1::int[])
 `, [friendsIds])
-  })
-  .then(res => res.rows)
-  .catch(error => console.log('getUserByFBId Error:', error));
-};
+    })
+    .then(res => res.rows)
+    .catch(error => console.log('getUserByFBId Error:', error));
+}
 
 const addFriendRequest = (db, userIdOne, userIdTwo) => {
   return db.query(`
@@ -95,10 +102,12 @@ module.exports = {
   getUserByFBId,
   createUser,
   getFriendsIdByUserId,
-  getUserId,
+  // getUserId,
   addFriendRequest,
   getFriendRequestForSender,
   getFriendRequestForReceiver,
   cancelFriendRequest,
-  confirmFriendRequest
+  confirmFriendRequest,
+  getUserById,
+  getUsersByIds
 }

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getLoggedUserId } = require('../utils');
-const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, getUserId, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest, confirmFriendRequest } = require('../db/selectors/users');
+const { getAllUsers, getUserByFBId, createUser, getFriendsIdByUserId, getUserById, addFriendRequest, getFriendRequestForSender, getFriendRequestForReceiver, cancelFriendRequest, confirmFriendRequest } = require('../db/selectors/users');
 
 
 module.exports = db => {
@@ -58,7 +58,7 @@ module.exports = db => {
     addFriendRequest(db, userIdOne, userIdTwo)
       .then(friends => {
         // return the user object to make the "Set state part easier"
-        getUserId(db, userIdTwo)
+        getUserById(db, userIdTwo)
         .then(user => {
           res.json( {user: user} )
         })
@@ -91,7 +91,7 @@ module.exports = db => {
     const userIdTwo = req.params.user;
     cancelFriendRequest(db, userIdOne, userIdTwo)
       .then(
-        getUserId(db, userIdTwo)
+        getUserById(db, userIdTwo)
         .then(user => {
           res.json( {user: user} )
         })
@@ -107,7 +107,7 @@ module.exports = db => {
       .then(() => {
         confirmFriendRequest(db, userIdOne, userIdTwo)
         .then(
-          getUserId(db, userIdTwo)
+          getUserById(db, userIdTwo)
           .then(user => {
             res.json( {user: user} )
           })
