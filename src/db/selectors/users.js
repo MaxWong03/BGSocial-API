@@ -54,7 +54,47 @@ const getFriendsIdByUserId = (db, userId) => {
     })
     .then(res => res.rows)
     .catch(error => console.log('getUserByFBId Error:', error));
+}
 
+const addFriendRequest = (db, userIdOne, userIdTwo) => {
+  return db.query(`
+    insert into friends (user1_id, user2_id) values ($1, $2);
+  `, [userIdOne, userIdTwo])
+  .then( res => res.rows)
+  .catch(error => console.log('addFriendRequest Error:', error));
+};
+
+const getFriendRequestForSender = (db, userIdOne) => {
+  return db.query(`
+    SELECT users.* FROM users JOIN friends ON friends.user2_id = users.id WHERE is_accepted = FALSE AND user1_id = $1;
+  `, [userIdOne])
+  .then( res => res.rows)
+  .catch(error => console.log('getFriendRequestForSender Error:', error));
+};
+
+const getFriendRequestForReceiver = (db, userID) => {
+  return db.query(`
+    SELECT users.* FROM users JOIN friends ON friends.user1_id = users.id WHERE is_accepted = FALSE AND user2_id = $1;
+  `, [userID])
+  .then(res => res.rows)
+  .catch(error => console.log('getFriendRequestForReceiver Error:', error));
+};
+
+const cancelFriendRequest = (db, userOneID, userTwoID) => {
+  return db.query(`
+    DELETE FROM friends WHERE user1_id = $1 AND user2_id = $2 OR user1_id = $2 AND user2_id = $1;
+  ;
+  `, [userOneID, userTwoID])
+  .then(res => res.rows)
+  .catch(error => console.log('cancelFriendRequest Error:', error));
+};
+
+const confirmFriendRequest = (db, userOneID, userTwoID) => {
+  return db.query(`
+    INSERT INTO friends (is_accepted, user1_id, user2_id) VALUES (true, $1, $2)
+  `, [userOneID, userTwoID])
+  .then(res => res.rows)
+  .catch(error => console.log('confirmFriendRequest Error:', error));
 };
 
 module.exports = {
@@ -62,6 +102,12 @@ module.exports = {
   getUserByFBId,
   createUser,
   getFriendsIdByUserId,
+  // getUserId,
+  addFriendRequest,
+  getFriendRequestForSender,
+  getFriendRequestForReceiver,
+  cancelFriendRequest,
+  confirmFriendRequest,
   getUserById,
   getUsersByIds
 }

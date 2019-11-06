@@ -4,7 +4,7 @@ require('./../environment');
 function getLoggedUserId(req) {
   const token = req.headers["x-auth-token"];
   const user = jwt.verify(token, process.env.SECRET_APP_KEY);
-  console.log('Logged user', user);
+  // console.log('Logged user', user);
   return user.id;
 };
 
