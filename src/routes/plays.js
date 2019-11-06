@@ -63,12 +63,23 @@ module.exports = db => {
   router.get("/:gameId/games-statistics", async (req, res) => {
     const userId = getLoggedUserId(req);
     const gameId = req.params.gameId
-    const isWinner = req.query.winner ? req.query.winner : '';
+    let isWinner = undefined;
+    if (req.query.winner === 'false') {
+      isWinner = false;
+    }
+    if (req.query.winner === 'true') {
+      isWinner = true;
+    }
+
     let usersId = undefined;
-    if(req.query.friends){
-      users = await getFriendsIdByUserId(db, userId)
+    if(req.query.users === 'friends'){
+      const users = await getFriendsIdByUserId(db, userId)
       usersId = users.map(user => user.id);
-      usersId.push(userId);
+    }
+    if(req.query.users === 'global'){
+    }
+    else  {
+      usersId = [userId];
     }
     console.log(usersId)
     getPlaysStatistics(db, gameId, isWinner, usersId)
@@ -145,3 +156,5 @@ module.exports = db => {
 
   return router;
 };
+
+// updatePlay(db, {...req.body, play_id:req.params.id})

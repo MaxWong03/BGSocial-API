@@ -1,4 +1,3 @@
-
 INSERT INTO plays (id, date, duration, game_id)
 VALUES
 (1, '2019-08-20', '2:16:00', 3),
