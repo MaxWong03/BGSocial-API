@@ -132,7 +132,7 @@ module.exports = db => {
     console.log('req.params.id', typeof req.params.id);
     console.log('req.body.id', typeof req.body.id);
     console.log('userId', userId);
-    if (!isUserInPlay(db, req.params.id, userId) || req.params.id !== `${req.body.id}`) {
+    if (!isUserInPlay(db, Number(req.params.id), userId) || Number(req.params.id) !== Number(req.body.id)) {
       res
         .status(403)
         .json({ error: "Forbidden" });

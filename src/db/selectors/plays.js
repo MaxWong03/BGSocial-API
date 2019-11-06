@@ -32,7 +32,6 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
   let usersCondition = '';
   let coma = ''
   let userAgroupation = ''
-  console.log('here are the suers',users)
   if (users) {
     coma = `,`
     userAgroupation = `plays_users.user_id`
@@ -54,9 +53,11 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
 
 const isUserInPlay = function (db, playId, userId) {
   return db.query(`SELECT plays_users.id
-   FROM plays_users
-   WHERE plays.user_id = $1 AND plays.play_id = $2`, [userId, playId])
-    .then(res => res.rows.length > 0);
+   FROM plays_users 
+   JOIN plays ON plays.id = plays_users.play_id
+   WHERE plays_users.user_id = $1 AND plays.id = $2`, [userId, playId])
+    .then(res => res.rows.length > 0)
+    .catch(err =>console.log(err));
 };
 
 // const getPlaysUserByUserId = function (db, userId) {
@@ -124,7 +125,10 @@ const updateUserPlay = function (db, userPlay) {
     RETURNING *;`
 
   return db.query(query, values)
-    .then(res => res.rows[0]);
+    .then(res => {
+      console.log(res.rows[0])
+      return res.rows[0]
+    }).catch (err => console.log(err));
 };
 
 const updatePlay = function (db, play) {

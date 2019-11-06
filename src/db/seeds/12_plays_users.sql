@@ -8,6 +8,7 @@ VALUES
 (15, false, 12, 2),
 (78, true, 26, 2),
 (7, false, 2, 2),
+(7, false, 1, 2),
 (55, false, 23, 2),
 (1, false, 22, 2),
 (84, false, 14, 3),
