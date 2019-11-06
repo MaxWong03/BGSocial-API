@@ -20,8 +20,8 @@ const getPlaysByUserId = function (db, userId) {
 };
 
 
-const getPlaysStatistics = function (db, gameId, isWinner, users) {
-  values = [gameId]
+const getPlaysStatistics = function (db, gameId, isWinner, users, excludedUserId) {
+  const values = [gameId, excludedUserId];
   let winnerCheck = '';
   if (isWinner === false) {
     winnerCheck = 'AND plays_users.is_winner = FALSE';
@@ -30,12 +30,8 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
     winnerCheck = 'AND plays_users.is_winner = TRUE';
   }
   let usersCondition = '';
-  let coma = ''
-  let userAgroupation = ''
   if (users) {
-    coma = `,`
-    userAgroupation = `plays_users.user_id`
-    usersCondition = `AND plays_users.user_id = ANY($2::int[])`;
+    usersCondition = `AND plays_users.user_id = ANY($3::int[])`;
     values.push(users);
   }
   return db.query(`SELECT
@@ -45,7 +41,7 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
     AVG(plays_users.score) AS avg_score,
     AVG(plays.duration) AS avg_duration 
     FROM plays_users JOIN plays ON plays_users.play_id = plays.id
-    WHERE plays.game_id = $1 ${winnerCheck} ${usersCondition}
+    WHERE plays.game_id = $1 AND plays_users.user_id != $2 ${winnerCheck} ${usersCondition}
     GROUP BY plays.game_id`, values)
     .then(res => res.rows)
     .catch(error => console.log(error))

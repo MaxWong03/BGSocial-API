@@ -61,6 +61,7 @@ module.exports = db => {
 
   // get all plays of the user by games id getPlaysStatistics = function (db, gameId, isWinner, users)
   router.get("/:gameId/games-statistics", async (req, res) => {
+    let excludedUserId = -1;
     const userId = getLoggedUserId(req);
     const gameId = req.params.gameId
     let isWinner = undefined;
@@ -77,12 +78,13 @@ module.exports = db => {
       usersId = users.map(user => user.id);
     }
     if(req.query.users === 'global'){
+      excludedUserId = userId;
     }
     else  {
       usersId = [userId];
     }
     console.log(usersId)
-    getPlaysStatistics(db, gameId, isWinner, usersId)
+    getPlaysStatistics(db, gameId, isWinner, usersId, excludedUserId)
       .then(plays => {
             res.json(plays);
           }).catch(e => console.log(e));
