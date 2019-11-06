@@ -83,7 +83,6 @@ module.exports = db => {
     else  {
       usersId = [userId];
     }
-    console.log(usersId)
     getPlaysStatistics(db, gameId, isWinner, usersId, excludedUserId)
       .then(plays => {
             res.json(plays);
@@ -130,10 +129,6 @@ module.exports = db => {
 
   router.post("/:id/edit", (req, res) => {
     const userId = getLoggedUserId(req);
-
-    console.log('req.params.id', typeof req.params.id);
-    console.log('req.body.id', typeof req.body.id);
-    console.log('userId', userId);
     if (!isUserInPlay(db, Number(req.params.id), userId) || Number(req.params.id) !== Number(req.body.id)) {
       res
         .status(403)

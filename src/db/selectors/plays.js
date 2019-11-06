@@ -122,7 +122,6 @@ const updateUserPlay = function (db, userPlay) {
 
   return db.query(query, values)
     .then(res => {
-      console.log(res.rows[0])
       return res.rows[0]
     }).catch (err => console.log(err));
 };
