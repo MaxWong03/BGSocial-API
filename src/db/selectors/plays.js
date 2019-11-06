@@ -39,7 +39,7 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
     usersCondition = `AND plays_users.user_id = ANY($2::int[])`;
     values.push(users);
   }
-  return db.query(`SELECT ${userAgroupation} ${coma}
+  return db.query(`SELECT
     MAX(plays_users.score) AS max_score, 
     MIN(plays_users.score) AS min_score,
     count(plays.game_id) as play_counts, 
@@ -47,7 +47,7 @@ const getPlaysStatistics = function (db, gameId, isWinner, users) {
     AVG(plays.duration) AS avg_duration 
     FROM plays_users JOIN plays ON plays_users.play_id = plays.id
     WHERE plays.game_id = $1 ${winnerCheck} ${usersCondition}
-    GROUP BY plays.game_id ${coma} ${userAgroupation}`, values)
+    GROUP BY plays.game_id`, values)
     .then(res => res.rows)
     .catch(error => console.log(error))
 };
