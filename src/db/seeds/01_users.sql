@@ -244,6 +244,14 @@ VALUES (1, 921623601546635, 'Max Wong', 'Mad Max', 'maxwong93@gmail.com', 'https
     'Darren.Watsica@hotmail.com',
     'https://s3.amazonaws.com/uifaces/faces/twitter/poormini/128.jpg'
   )
-;
+,
+(
+  31,
+  10219445906914690,
+  'Laura',
+  'Nen',
+  'laruaNen@gmail.com',
+  'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10219445906914690&height=350&width=350&ext=1576019516&hash=AeTqydqWo4Sy2CG8'
+);
 
 SELECT SETVAL('users_id_seq', 50);
