@@ -71,7 +71,6 @@ module.exports = db => {
     if (req.query.winner === 'true') {
       isWinner = true;
     }
-
     let usersId = undefined;
     if(req.query.users === 'friends'){
       const users = await getFriendsIdByUserId(db, userId)
@@ -80,7 +79,7 @@ module.exports = db => {
     if(req.query.users === 'global'){
       excludedUserId = userId;
     }
-    else  {
+    if(req.query.users === undefined || req.query.users === null)  {
       usersId = [userId];
     }
     getPlaysStatistics(db, gameId, isWinner, usersId, excludedUserId)
